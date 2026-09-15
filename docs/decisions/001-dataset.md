@@ -58,6 +58,14 @@ Inspected with h5py (old anndata layout, categories under `obs/__categories`):
 
 First 2,000,000 R1 reads of `SRR19330859` (`KD6_seq1_essential_mRNA_lane_4_S52_L004`, md5 OK): R1 length 28; 912,413 reads (45.6%) carry an exact 16-mer matching one of the 3,681 `gem_group == 4` barcodes, and **all 3,681 barcodes are observed**. The remaining reads are ambient/empty-droplet barcodes, as expected before cell calling.
 
+### sgRNA library reads verified on lane_4 (2026-09-15)
+
+500,000 read pairs of `SRR19330545` (`KD6_seq1_essential_sgRNA_lane_4_S4_L001`, md5 OK), against the kb-python/ngs_tools 1.8.5 `10xFB` feature-barcode map (`~/ngs_ref/whitelists/10x_feature_barcode_map.txt.gz`, 6,794,880 rows, FB barcode → GEX barcode):
+
+- R1 barcode equals a `gem_group 4` GEX barcode directly: 0.2%. Equals the **feature-barcode variant** of one: **36.0%** → translation is mandatory before joining guide counts to GEX cells; kb-python's `kite:10xFB` workflow does it internally.
+- R2 = 98 nt; 94.7% start with the 30-nt TSO. Exact 20-mer library hit: 61% of reads (guide A 44%, guide B 17%); protospacer starts at 0-based offset 31 (72%), 30 (22%), 32 (6%), 33 (<1%). Of the hits, 94% (A) and 99% (B) are followed by the expected scaffold (`GTTTCAGAGCTA` for A, `GTTTAAGAGCTA` for B).
+- 39% of reads have no exact 20-mer hit in the window; T-12 must allow mismatches (kite k-mer index) and report the unmatched fraction, not silently drop it.
+
 ## Consequences
 
 - T-01 DoD: download 12 runs from ENA, verify `fastq_md5` from the ENA filereport, download the h5ad and record the number of cells for `lane_4`.
