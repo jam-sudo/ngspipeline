@@ -32,7 +32,12 @@ Consequences of kite's design that are recorded rather than tuned away:
 
 ## Result
 
-PENDING: kite counts on the test data vs direct matching (exact and Hamming-1, scaffold-anchored) — agreement rate per (cell, guide) will be appended here.
+Test data (008): 120 cells + 300 background barcodes, 57,982 guide read pairs, 108-guide library.
+
+- **kite** (`GUIDE_COUNT`, `kite:10xFB`): 172 barcodes × 108 features, 290 non-zero entries, 8,750 UMIs. 116/120 cells have counts.
+- **Direct matching** (`bin/guide_count_direct.py`: window 28–36, exact then Hamming-1, same translation map, exact UMI collapsing): 288 (barcode, feature) pairs, 8,694 UMIs. Per read, for the 120 cells: 74 % matched (exact 16,522 + Hamming-1 901 of 23,641); against the _full_ 4,582-protospacer library 76 %, so the unmatched quarter is mostly reads with ≥ 2 errors or damaged structure, not other vectors. Background barcodes: 7 % matched (ambient reads from vectors outside the test library).
+- **Agreement**: 287 pairs in both; 254/287 identical UMI counts; the rest differ by a median 2.9 % (kite slightly higher — bustools UMI handling vs. exact collapsing). 3 pairs kite-only, 1 direct-only. Per cell, the top feature agrees in 112/116 cells, and in **110/116 cells the two highest kite features are exactly the authors' vector guides (`sgID_AB`)**.
+- The 4 cells without kite counts have 36–48 guide reads each in the FASTQ but no read matching any library protospacer (direct matching finds only 1–2 ambient hits); both methods agree, so this is a property of those cells' guide reads (and the 10 % UMI subsample), not of the counter.
 
 ## Consequences
 
