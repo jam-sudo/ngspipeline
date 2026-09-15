@@ -37,8 +37,8 @@ lint:
 template:
   org: jam-sudo
   name: ngspipeline
-  description: 'Perturb-seq raw-read pipeline: FASTQ -> GEX/guide count matrices ->
-    per-cell guide assignment -> ALIVE-ready h5ad'
+  description: "Perturb-seq raw-read pipeline: FASTQ -> GEX/guide count matrices ->
+    per-cell guide assignment -> ALIVE-ready h5ad"
   author: Jae Min Yoon
   version: 0.1.0dev
   force: true
