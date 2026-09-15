@@ -105,6 +105,7 @@ def main():
     ap.add_argument("--min-cells-fit", type=int, default=10); ap.add_argument("--restarts", type=int, default=100)
     ap.add_argument("--seed", type=int, default=0); ap.add_argument("--sample", default="sample")
     ap.add_argument("--out", required=True); ap.add_argument("--summary", required=True)
+    ap.add_argument("--mqc", help="write a MultiQC custom-content bargraph TSV (*_mqc.tsv)")
     a = ap.parse_args()
 
     lib = list(csv.DictReader(open(a.library)))
@@ -202,6 +203,20 @@ def main():
             s.write(f"{k}\t{v}\n")
         if a.method == "mixture":
             s.write(f"vectors_fit\t{sum(1 for v in fits.values() if v)}\nvectors_fallback\t{sum(1 for v in fits.values() if not v)}\n")
+    if a.mqc:
+        n = max(len(cells), 1)
+        with open(a.mqc, "w") as m:
+            m.write("# id: 'guide_assignment'\n# section_name: 'Guide assignment'\n"
+                    f"# description: 'Per-cell guide (vector) assignment status from guide_assign.py ({a.method}: min_umi={a.min_umi:g}, min_ratio={a.min_ratio:g}). "
+                    "single = one vector, multi = two or more, unassigned = none.'\n"
+                    "# plot_type: 'bargraph'\n# pconfig:\n#     id: 'guide_assignment_status'\n#     title: 'Guide assignment: cells by status'\n#     ylab: 'Cells'\n#     cpswitch_counts_label: 'Cells'\n#     cpswitch_percent_label: 'Percent of cells'\n")
+            m.write("Sample\tsingle\tmulti\tunassigned\n")
+            m.write(f"{a.sample}\t{status_counts['single']}\t{status_counts['multi']}\t{status_counts['unassigned']}\n")
+        gs = a.mqc.replace("_mqc.tsv", "_generalstats_mqc.tsv") if a.mqc.endswith("_mqc.tsv") else a.mqc + ".generalstats_mqc.tsv"
+        with open(gs, "w") as m:
+            m.write("# id: 'guide_assignment_generalstats'\n# plot_type: 'generalstats'\n# pconfig:\n#     guide_single_pct:\n#         title: '% single guide'\n#         description: 'Cells with exactly one assigned guide vector'\n#         min: 0\n#         max: 100\n#         suffix: '%'\n#         format: '{:,.1f}'\n#     guide_multi_pct:\n#         title: '% multi guide'\n#         min: 0\n#         max: 100\n#         suffix: '%'\n#         format: '{:,.1f}'\n#     guide_unassigned_pct:\n#         title: '% unassigned'\n#         min: 0\n#         max: 100\n#         suffix: '%'\n#         format: '{:,.1f}'\n")
+            m.write("Sample\tguide_single_pct\tguide_multi_pct\tguide_unassigned_pct\n")
+            m.write(f"{a.sample}\t{100*status_counts['single']/n:.2f}\t{100*status_counts['multi']/n:.2f}\t{100*status_counts['unassigned']/n:.2f}\n")
     print(f"[guide_assign] {a.sample} {a.method}: {status_counts} of {len(cells)} cells, {len(vectors)} vectors", file=sys.stderr)
 
 
