@@ -93,9 +93,14 @@ workflow PIPELINE_INITIALISATION {
         .map {
             meta, gex_r1, gex_r2, guide_r1, guide_r2 ->
                 def gex   = [ gex_r1, gex_r2 ].collect { resolveSamplesheetPath(it, samplesheet_dir) }
-                def guide = [ guide_r1, guide_r2 ].collect { resolveSamplesheetPath(it, samplesheet_dir) }
-                return [ meta, gex, guide ]
+                def guide = (guide_r1 || guide_r2) ? [ guide_r1, guide_r2 ].collect { resolveSamplesheetPath(it, samplesheet_dir) } : []
+                if (guide.size() == 1) {
+                    error("Please check input samplesheet -> guide_r1 and guide_r2 must be given together: ${meta.id}")
+                }
+                return [ meta.id, meta, gex, guide ]
         }
+        .groupTuple()
+        .map { samplesheet -> validateInputSamplesheet(samplesheet) }
         .set { ch_samplesheet }
 
     emit:
@@ -146,6 +151,23 @@ def resolveSamplesheetPath(p, samplesheet_dir) {
         error("Please check input samplesheet -> FASTQ file does not exist: ${s} (resolved to ${f})")
     }
     return f
+}
+
+//
+// Merge the rows of one sample: GEX pairs from every row (sorted by R1 path), guide pairs from the rows that carry them
+//
+def validateInputSamplesheet(input) {
+    def (id, metas, gex_pairs, guide_pairs) = input
+    def expected = metas.collect { m -> m.expected_cells }.unique()
+    if (expected.size() != 1) {
+        error("Please check input samplesheet -> expected_cells must be identical across the rows of sample ${id}: ${expected}")
+    }
+    def gex   = gex_pairs.sort { pair -> pair[0].toString() }.flatten()
+    def guide = guide_pairs.findAll { pair -> pair }.sort { pair -> pair[0].toString() }.flatten()
+    if (!guide) {
+        error("Please check input samplesheet -> sample ${id} has no guide_r1/guide_r2 on any row")
+    }
+    return [ metas[0], gex, guide ]
 }
 //
 // Generate methods description for MultiQC
