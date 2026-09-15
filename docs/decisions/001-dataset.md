@@ -36,6 +36,16 @@ Proposed: **Replogle 2022, K562 day-6 essential-scale, GEM group `lane_4`** (mRN
 Published assignment source: `.obs` of `K562_essential_raw_singlecell_01.h5ad` (Figshare 20029387), filtered to this GEM group.
 `--chemistry`: 10x 3' v3 (NEEDS_HUMAN to confirm from CG000184 / paper before T-11 wiring; whitelist 3M-february-2018).
 
+### Published assignment file (downloaded 2026-09-15)
+
+`K562_essential_raw_singlecell_01.h5ad` (Figshare file 35773219, 10.66 GB, md5 `4f1122ce1c7f13299a68df6459a266d3` verified with `md5sum -c`), stored at `~/ngs_data/replogle_k562_essential_h5ad/`.
+Inspected with h5py (old anndata layout, categories under `obs/__categories`):
+
+- 310,385 cells total; `obs` columns: `cell_barcode` (index, `<16bp>-<gem_group>`), `gem_group` (int, 48 groups = the 48 sequencing "lanes"), `gene`, `gene_id`, `sgID_AB`, `gene_transcript`, `transcript`, `UMI_count`, `core_adjusted_UMI_count`, `core_scale_factor`, `mitopercent`, `z_gemgroup_UMI`.
+- `gem_group == 4` (= FASTQ `lane_4`): **3,681 cells**, 1,610 distinct `sgID_AB` values, 120 `non-targeting` cells. It is the smallest group, consistent with `lane_4` being the smallest FASTQ set.
+- `sgID_AB` is a **dual-guide identity** (`GENE_+_pos.23-P1P2|GENE_-_pos.23-P1P2`): each vector carries two sgRNAs (A and B) against the same gene. 2,273 distinct values / 2,058 genes across the file. T-12/T-13 must therefore count and assign at the vector (A|B pair) level, or per sgRNA then reconcile; recorded as an input to `docs/decisions/005`.
+- The h5ad contains only cells that passed the authors' guide calling; unassigned/multiplet cells are absent, so concordance in T-16 is measured on the intersection of barcodes.
+
 ## Consequences
 
 - T-01 DoD: download 12 runs from ENA, verify `fastq_md5` from the ENA filereport, download the h5ad and record the number of cells for `lane_4`.
