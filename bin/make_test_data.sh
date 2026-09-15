@@ -12,4 +12,4 @@ python3 "$here/bin/make_test_data.py" \
   --genes "$here/assets/test_data/selected_genes.tsv" \
   --fasta "$fasta" --gtf "$gtf" --library-pairs "$pairs" \
   --outdir "$outdir" \
-  --gex-frac 0.05 --bg-frac 1.0 --guide-frac 0.2 --flank 500 --extra-vectors 6
+  --gex-frac 0.05 --bg-frac 0.02 --guide-frac 0.1 --flank 500 --extra-vectors 6
