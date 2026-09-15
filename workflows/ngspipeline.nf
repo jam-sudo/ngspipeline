@@ -7,6 +7,7 @@ include { FASTQC                 } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { GEX_QUANT              } from '../subworkflows/local/gex_quant/main'
 include { GUIDE_QUANT            } from '../subworkflows/local/guide_quant/main'
+include { GUIDE_ASSIGN           } from '../modules/local/guide_assign/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -28,6 +29,9 @@ workflow NGSPIPELINE {
     reference_index // string: prebuilt kb index directory or null
     chemistry       // string: kb technology string (10XV2, 10XV3)
     kb_workflow     // string: kb workflow ('standard')
+    assign_method   // string: threshold | mixture
+    min_umi         // number: guide assignment minimum top-1 UMI
+    min_ratio       // number: guide assignment minimum top-1/top-2 ratio
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -63,6 +67,20 @@ workflow NGSPIPELINE {
     //
     GUIDE_QUANT(ch_guide, guides, chemistry, GEX_QUANT.out.dims, GEX_QUANT.out.count_dir)
     ch_versions = ch_versions.mix(GUIDE_QUANT.out.versions)
+
+    //
+    // MODULE: per-cell guide assignment on GEX-called cells
+    //
+    def ch_gex_cells = GEX_QUANT.out.count_dir.map { meta, dir ->
+        def f = file("${dir}/counts_filtered/cells_x_genes.barcodes.txt")
+        [ meta, f.exists() ? f : file("${dir}/counts_unfiltered/cells_x_genes.barcodes.txt") ]
+    }
+    def ch_assign_in = GUIDE_QUANT.out.matrix
+        .join(GUIDE_QUANT.out.barcodes)
+        .join(GUIDE_QUANT.out.features)
+        .join(ch_gex_cells)
+    GUIDE_ASSIGN(ch_assign_in, GUIDE_QUANT.out.feature_map, file(guides, checkIfExists: true), assign_method, min_umi, min_ratio)
+    ch_multiqc_files = ch_multiqc_files.mix(GUIDE_ASSIGN.out.summary.map { _meta, f -> f })
 
     //
     // Collate and save software versions
@@ -124,6 +142,7 @@ workflow NGSPIPELINE {
     gex_dims       = GEX_QUANT.out.dims         // channel: [ meta, [cells, genes, nnz, matrix] ]
     guide_h5ad     = GUIDE_QUANT.out.h5ad       // channel: [ meta, guide_counts.h5ad ]
     guide_stats    = GUIDE_QUANT.out.stats      // channel: [ meta, map ]
+    assignment     = GUIDE_ASSIGN.out.assignment // channel: [ meta, assignment.tsv ]
     versions       = ch_versions                // channel: [ path(versions.yml) ]
 }
 

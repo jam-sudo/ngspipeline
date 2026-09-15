@@ -5,6 +5,9 @@
                 "FASTQC": {
                     "fastqc": "0.12.1"
                 },
+                "GUIDE_ASSIGN": {
+                    "python": "3.8.18"
+                },
                 "GUIDE_COUNT": {
                     "kallistobustools": "0.28.2"
                 },
@@ -57,6 +60,8 @@
                 "guides/replogle_k562_lane4_test",
                 "guides/replogle_k562_lane4_test/10x_fb_whitelist.txt",
                 "guides/replogle_k562_lane4_test/10x_feature_barcode_map.txt",
+                "guides/replogle_k562_lane4_test/assignment.tsv",
+                "guides/replogle_k562_lane4_test/assignment_summary.tsv",
                 "guides/replogle_k562_lane4_test/counts_unfiltered",
                 "guides/replogle_k562_lane4_test/counts_unfiltered/adata.h5ad",
                 "guides/replogle_k562_lane4_test/counts_unfiltered/cells_x_features.barcodes.txt",
@@ -161,6 +166,8 @@
                 "transcripts.txt:md5,e39d18882a7d6d97c619dd9748ae5a6d",
                 "10x_fb_whitelist.txt:md5,1f2b4ba8a6fcfacf6dcf165ce09e974d",
                 "10x_feature_barcode_map.txt:md5,e18354644b3512f71533e7b5c494c698",
+                "assignment.tsv:md5,f6a5919319a2056457867c976a6f7e4a",
+                "assignment_summary.tsv:md5,c0b89671c451034a3b3a524d5197703f",
                 "adata.h5ad:md5,b1f12d1cffb0f35e2aedfb1e3f697481",
                 "cells_x_features.barcodes.txt:md5,06b48d8dfd661d6ba6791503fc537010",
                 "cells_x_features.genes.names.txt:md5,d37c3fa7318e5d13c219937cceab03a8",
@@ -196,7 +203,7 @@
                 "guide_nnz": 290
             }
         ],
-        "timestamp": "2026-09-15T15:59:12.534028",
+        "timestamp": "2026-09-15T16:11:08.443516",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"

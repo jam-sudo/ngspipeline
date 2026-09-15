@@ -1,0 +1,51 @@
+nextflow_process {
+
+    name "GUIDE_ASSIGN on a synthetic guide matrix (T-13 DoD)"
+    script "modules/local/guide_assign/main.nf"
+    process "GUIDE_ASSIGN"
+    tag "assign"
+
+    // expected statuses come from tests/data/assign_synthetic/expected.tsv (fixed by the design, see make_synthetic.py)
+    def expected = [
+        threshold: [E1_single: ['single', 'V1'], E2_multi: ['multi', 'V1'], E3_borderline: ['single', 'V1'], E4_zero: ['unassigned', ''], E5_tie: ['multi', 'V1']],
+        mixture:   [E1_single: ['single', 'V1'], E2_multi: ['multi', 'V1'], E3_borderline: ['single', 'V1'], E4_zero: ['unassigned', ''], E5_tie: ['multi', 'V1']],
+    ]
+
+    ['threshold', 'mixture'].each { method ->
+        test("${method}: five edge cells get the designed status") {
+
+            when {
+                params {
+                    outdir = "$outputDir"
+                }
+                process {
+                    """
+                    def d = "${projectDir}/tests/data/assign_synthetic"
+                    input[0] = [ [ id: 'synthetic' ], file("\${d}/cells_x_features.mtx"), file("\${d}/cells_x_features.barcodes.txt"), file("\${d}/cells_x_features.genes.txt"), file("\${d}/cells.txt") ]
+                    input[1] = file("\${d}/feature_map.tsv")
+                    input[2] = file("\${d}/library.csv")
+                    input[3] = '${method}'
+                    input[4] = 5
+                    input[5] = 3
+                    """
+                }
+            }
+
+            then {
+                assert process.success
+                def rows = path(process.out.assignment[0][1]).readLines().drop(1).collect { it.split('\t', -1) }
+                def header = path(process.out.assignment[0][1]).readLines()[0].split('\t')
+                assert header.take(9) == ['cell_barcode', 'guide_id', 'target_gene', 'method', 'top1_umi', 'top2_umi', 'ratio', 'posterior', 'status']
+                def got = rows.collectEntries { r -> [(r[0]): [r[8], r[1]]] }
+                expected[method].each { cell, exp ->
+                    assert got[cell] == exp : "${method} ${cell}: expected ${exp} got ${got[cell]}"
+                }
+                // the 12 + 12 designed positives are single with their vector; the 26 background cells are unassigned
+                def by_group = rows.groupBy { r -> def i = rows.indexOf(r); i < 12 ? 'V1pos' : (i < 24 ? 'V2pos' : (i < 50 ? 'bg' : 'edge')) }
+                assert by_group.V1pos.every { it[8] == 'single' && it[1] == 'V1' }
+                assert by_group.V2pos.every { it[8] == 'single' && it[1] == 'V2' }
+                assert by_group.bg.every { it[8] == 'unassigned' }
+            }
+        }
+    }
+}
