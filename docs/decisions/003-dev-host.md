@@ -19,7 +19,7 @@ Measured on 2026-09-15 (T-00/T-02):
 | Template `-profile test,docker` | **137 s wall** (FASTQC ×3 ≈ 15 s each, MULTIQC 1m29s; amd64 biocontainers under Rosetta)       | not measured                                                                                        |
 | Toolchain                       | Nextflow 26.04.6, nf-core 4.1.0, nf-test 0.9.5, OpenJDK 26.0.2.1                               | not measured                                                                                        |
 
-Colima note: only `$HOME` and `/tmp/colima` are mounted in the VM, so the Nextflow work dir must live under `$HOME` (a run with work dir under `/private/tmp` failed with `.command.run: No such file or directory`). `~/NGSpipeline/work` is gitignored and used.
+Colima notes: VM memory was raised from 12 GB to 20 GB for the index-build measurements (002); for day-to-day development 8 CPU / 14 GB leaves room for macOS on a 24 GB machine. Only `$HOME` and `/tmp/colima` are mounted in the VM, so the Nextflow work dir must live under `$HOME` (a run with work dir under `/private/tmp` failed with `.command.run: No such file or directory`). `~/NGSpipeline/work` is gitignored and used.
 
 ## Options
 
@@ -29,11 +29,12 @@ Colima note: only `$HOME` and `/tmp/colima` are mounted in the VM, so the Nextfl
 
 ## Choice
 
-Proposed: **Option 1 for Phases 2–3** (test profile takes 137 s, well under 5 min; Rosetta emulation works for biocontainers). Full-sample Phase 4 runs are `local` on the MacBook if memory allows (kallisto index build measured in 002), else WSL2/AWS.
+Proposed: **Option 1 for Phases 2–3** (the T-11 test profile takes 72 s under Rosetta, well under 5 min; all biocontainers used so far run under Rosetta). Full-sample Phase 4 runs are `local` on the MacBook if memory allows (kallisto index build measured in 002), else WSL2/AWS.
 WSL2 is unreachable at decision time, so it cannot be the default dev host.
 
 ## Consequences
 
 - `conf/test.config` resource caps sized to the colima VM (8 CPU / 12 GB).
-- Docker Desktop is not used; the human should keep `colima start` in their session start routine (or the agent starts it).
+- Docker Desktop is not used; the human should keep `colima start --vz-rosetta` in their session start routine (or the agent starts it) and check that `colima start` does not print `Unable to enable Rosetta`.
+- In-pipeline reference building for the full human genome is not possible on this host (002); full runs use `--reference_index`.
 - If WSL2 comes back online, re-measure the test profile there and update this record; the MacBook stays the primary editor.
