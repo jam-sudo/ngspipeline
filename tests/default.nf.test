@@ -27,6 +27,7 @@ nextflow_pipeline {
             def guide_header = path("$outputDir/guides/replogle_k562_lane4_test/counts_unfiltered/cells_x_features.mtx").readLines().find { !it.startsWith('%') }
             def (gbc, gfeat, gnnz) = guide_header.trim().split(/\s+/).collect { it as int }
             assert gfeat == 108   // rows of assets/guide_library_test.csv (T-12 DoD)
+            assert path("$outputDir/alive/replogle_k562_lane4_test.h5ad").exists()   // T-14 DoD
             assertAll(
                 { assert snapshot(
                     // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions

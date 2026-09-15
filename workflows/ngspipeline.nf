@@ -8,6 +8,7 @@ include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { GEX_QUANT              } from '../subworkflows/local/gex_quant/main'
 include { GUIDE_QUANT            } from '../subworkflows/local/guide_quant/main'
 include { GUIDE_ASSIGN           } from '../modules/local/guide_assign/main'
+include { TO_ALIVE_H5AD          } from '../modules/local/to_alive_h5ad/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -32,6 +33,7 @@ workflow NGSPIPELINE {
     assign_method   // string: threshold | mixture
     min_umi         // number: guide assignment minimum top-1 UMI
     min_ratio       // number: guide assignment minimum top-1/top-2 ratio
+    keep_nonsingle  // boolean: keep multi/unassigned cells in the ALIVE h5ad (006)
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -81,6 +83,11 @@ workflow NGSPIPELINE {
         .join(ch_gex_cells)
     GUIDE_ASSIGN(ch_assign_in, GUIDE_QUANT.out.feature_map, file(guides, checkIfExists: true), assign_method, min_umi, min_ratio)
     ch_multiqc_files = ch_multiqc_files.mix(GUIDE_ASSIGN.out.mqc.map { _meta, f -> f }.flatten())
+
+    //
+    // MODULE: ALIVE-ready h5ad (counts + assignment; docs/alive_schema.md, 006)
+    //
+    TO_ALIVE_H5AD(GEX_QUANT.out.count_dir.join(GUIDE_ASSIGN.out.assignment), keep_nonsingle)
 
     //
     // MultiQC custom content: quantifier statistics (kb count run_info.json / inspect.json + matrix dimensions)
@@ -151,6 +158,7 @@ workflow NGSPIPELINE {
     guide_h5ad     = GUIDE_QUANT.out.h5ad       // channel: [ meta, guide_counts.h5ad ]
     guide_stats    = GUIDE_QUANT.out.stats      // channel: [ meta, map ]
     assignment     = GUIDE_ASSIGN.out.assignment // channel: [ meta, assignment.tsv ]
+    alive_h5ad     = TO_ALIVE_H5AD.out.h5ad     // channel: [ meta, <sample>.h5ad ]
     versions       = ch_versions                // channel: [ path(versions.yml) ]
 }
 
