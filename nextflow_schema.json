@@ -94,6 +94,34 @@
             },
             "required": ["chemistry"]
         },
+        "guide_assignment_options": {
+            "title": "Guide assignment options",
+            "type": "object",
+            "fa_icon": "fas fa-crosshairs",
+            "description": "How each GEX-called cell is assigned a guide vector from the guide-count matrix (bin/guide_assign.py).",
+            "properties": {
+                "assign_method": {
+                    "type": "string",
+                    "default": "threshold",
+                    "enum": ["threshold", "mixture"],
+                    "description": "threshold: top-1 UMI >= min_umi and top-1/top-2 >= min_ratio -> single. mixture: per-vector Poisson/Gaussian mixture on log2 UMI (Replogle et al.), posterior > 0.5; single = exactly one vector.",
+                    "fa_icon": "fas fa-cogs"
+                },
+                "min_umi": {
+                    "type": "number",
+                    "minimum": 0,
+                    "description": "Minimum top-1 vector UMI count for a cell to be assigned (threshold method; fallback for unfittable vectors in mixture). No default: set from the dataset (PLAN.md T-13).",
+                    "fa_icon": "fas fa-sort-numeric-up"
+                },
+                "min_ratio": {
+                    "type": "number",
+                    "minimum": 1,
+                    "description": "Minimum top-1 / top-2 UMI ratio for a single assignment (threshold method). No default: set from the dataset.",
+                    "fa_icon": "fas fa-divide"
+                }
+            },
+            "required": ["min_umi", "min_ratio"]
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -237,6 +265,9 @@
         },
         {
             "$ref": "#/$defs/reference_options"
+        },
+        {
+            "$ref": "#/$defs/guide_assignment_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
