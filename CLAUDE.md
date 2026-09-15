@@ -1,7 +1,7 @@
 # NGSpipeline
 
 Perturb-seq raw-read pipeline: FASTQ → GEX/guide count matrices → per-cell guide assignment → ALIVE-ready h5ad.
-Nextflow DSL2, nf-core conventions. Downstream consumer: ALIVE (https://github.com/jam-sudo/alive).
+Nextflow DSL2, nf-core conventions. Downstream consumer: ALIVE ([https://github.com/jam-sudo/alive](https://github.com/jam-sudo/alive)).
 
 Document roles — read in this order:
 
@@ -10,25 +10,25 @@ Document roles — read in this order:
 - `docs/progress.md`: what is done, with evidence. The only status document.
 - `docs/decisions/`: one file per decision; `docs/decisions/README.md` is the index.
 - `docs/learning_debt.md`: unanswered explanation checks.
-  Nothing is "done" until the human has run the DoD commands and recorded the result in `docs/progress.md`.
+Nothing is "done" until the human has run the DoD commands and recorded the result in `docs/progress.md`.
 
 ## Current state
 
 <!-- Human updates this block at session start. Agent reads only. Keep to pointers; details live in docs/progress.md. -->
 
-- Active task: T-01, T-02 (parallel; T-00 done)
+- Active task: T-00
 - Pipeline name: ngspipeline — docs/decisions/004-naming.md
 - Dev host: UNDECIDED — docs/decisions/003-dev-host.md
 - Dataset: UNDECIDED — docs/decisions/001-dataset.md
 - Quantifier: UNDECIDED — docs/decisions/002-quantifier.md
-- Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35007527245 (T-00, lint)
+- Last green CI: none
 - Open learning debt: none (docs/learning_debt.md)
 
 ## Rules
 
 1. Never guess accessions, file sizes, tool versions, chemistry/whitelist names, or parameter defaults. Write `NEEDS_HUMAN: <question>` in the PR body and stop that thread of work.
 2. Never weaken a test or change an expected value to make it pass. Any expected-value change requires a `docs/decisions/` entry and explicit human approval in the PR.
-3. `nextflow run . -profile test,docker` must finish in < 5 min on the dev host. Meet this by shrinking test data, never by bypassing pipeline stages.
+3. `nextflow run . -profile test,docker` must finish in &lt; 5 min on the dev host. Meet this by shrinking test data, never by bypassing pipeline stages.
 4. Reuse nf-core modules (`nf-core modules install <tool>`). Hand-written modules are limited to `modules/local/{guide_index,guide_count,guide_assign,to_alive_h5ad}`. If you believe a fifth is required, write `NEEDS_HUMAN:` with the reason.
 5. Every output must be reproducible by `nextflow run`. No result files produced outside the pipeline are committed.
 6. Discordance with published guide assignments is a finding to document in `docs/01_guide_assignment_validation.md`, never a target to tune away. Do not adjust thresholds to raise concordance.
@@ -40,11 +40,11 @@ Document roles — read in this order:
 
 ## Commands
 
-- Lint: `nf-core pipelines lint`
-- Test: `nextflow run . -profile test,docker -resume`
-- Unit: `nf-test test tests/`
+- Lint:   `nf-core pipelines lint`
+- Test:   `nextflow run . -profile test,docker -resume`
+- Unit:   `nf-test test tests/`
 - Schema: `nf-core pipelines schema build`
-- Full: `nextflow run . -profile <local|slurm|awsbatch>,<docker|singularity> --input samplesheet.csv --guides guide_library.csv --outdir results`
+- Full:   `nextflow run . -profile <local|slurm|awsbatch>,<docker|singularity> --input samplesheet.csv --guides guide_library.csv --outdir results`
 
 ## Layout
 
@@ -65,4 +65,4 @@ docs/01_guide_assignment_validation.md   docs/02_resume_check.md   docs/03_cross
 
 ## Decision records
 
-`docs/decisions/NNN-<topic>.md` — Context / Options / Choice / Consequences. Agent drafts, human approves by adding `Status: accepted` and a date.
+`docs/decisions/NNN-[[ORCA_RICH_MD:45fc83cd7aa3a8160d8f242cb8501a99:inline-html:%3Ctopic%3E]].md` — Context / Options / Choice / Consequences. Agent drafts, human approves by adding `Status: accepted` and a date.

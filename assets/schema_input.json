@@ -2,7 +2,7 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/jam-sudo/ngspipeline/master/assets/schema_input.json",
     "title": "jam-sudo/ngspipeline pipeline - params.input schema",
-    "description": "Schema for the file provided with params.input: one Perturb-seq sample per row with its gene-expression (GEX) and guide (sgRNA) library FASTQs. Relative paths are resolved against the samplesheet's directory.",
+    "description": "Schema for the file provided with params.input: Perturb-seq samples with their gene-expression (GEX) and guide (sgRNA) library FASTQs. Several rows may share a sample_id (one per sequencing run/lane); their GEX pairs are merged, and guide pairs may be given on any subset of those rows. Relative paths are resolved against the samplesheet's directory.",
     "type": "array",
     "items": {
         "type": "object",
@@ -40,6 +40,6 @@
                 "meta": ["expected_cells"]
             }
         },
-        "required": ["sample_id", "gex_r1", "gex_r2", "guide_r1", "guide_r2", "expected_cells"]
+        "required": ["sample_id", "gex_r1", "gex_r2", "expected_cells"]
     }
 }
