@@ -37,6 +37,7 @@ workflow JAMSUDO_NGSPIPELINE {
     //
     NGSPIPELINE (
         samplesheet,
+        params.guides,
         params.fasta,
         params.gtf,
         params.reference_index,
