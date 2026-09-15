@@ -23,6 +23,10 @@ nextflow_pipeline {
             assert workflow.success
             assert cells >= 96 && cells <= 120
             assert genes == 200
+            assert path("$outputDir/guides/replogle_k562_lane4_test/guide_counts.h5ad").exists()
+            def guide_header = path("$outputDir/guides/replogle_k562_lane4_test/counts_unfiltered/cells_x_features.mtx").readLines().find { !it.startsWith('%') }
+            def (gbc, gfeat, gnnz) = guide_header.trim().split(/\s+/).collect { it as int }
+            assert gfeat == 108   // rows of assets/guide_library_test.csv (T-12 DoD)
             assertAll(
                 { assert snapshot(
                     // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions
@@ -31,7 +35,7 @@ nextflow_pipeline {
                     stable_path,
                     // All files with stable contents
                     stable_content,
-                    [cells: cells, genes: genes, nnz: nnz]
+                    [cells: cells, genes: genes, nnz: nnz, guide_barcodes: gbc, guide_features: gfeat, guide_nnz: gnnz]
                 ).match() }
             )
         }

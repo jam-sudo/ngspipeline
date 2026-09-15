@@ -3,7 +3,7 @@
 // `kite:10xFB` translates it to the gene-expression barcode so the matrix joins directly to GEX.
 process GUIDE_COUNT {
     tag "$meta.id"
-    label 'process_medium'
+    label 'process_low'
 
     conda "${moduleDir}/environment.yml"
     container "${ workflow.containerEngine in ['singularity', 'apptainer'] && !task.ext.singularity_pull_docker_container ?
