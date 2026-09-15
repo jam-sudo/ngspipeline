@@ -16,12 +16,12 @@ Document roles — read in this order:
 
 <!-- Human updates this block at session start. Agent reads only. Keep to pointers; details live in docs/progress.md. -->
 
-- Active task: T-00
+- Active task: T-01, T-02 (parallel; T-00 done)
 - Pipeline name: ngspipeline — docs/decisions/004-naming.md
 - Dev host: UNDECIDED — docs/decisions/003-dev-host.md
 - Dataset: UNDECIDED — docs/decisions/001-dataset.md
 - Quantifier: UNDECIDED — docs/decisions/002-quantifier.md
-- Last green CI: none
+- Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35007527245 (T-00, lint)
 - Open learning debt: none (docs/learning_debt.md)
 
 ## Rules
