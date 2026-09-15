@@ -34,7 +34,7 @@ Rejected:
 
 Proposed: **Replogle 2022, K562 day-6 essential-scale, GEM group `lane_4`** (mRNA 8 runs + sgRNA 4 runs, 15.9 GB total).
 Published assignment source: `.obs` of `K562_essential_raw_singlecell_01.h5ad` (Figshare 20029387), filtered to this GEM group.
-`--chemistry`: 10x 3' v3 (NEEDS_HUMAN to confirm from CG000184 / paper before T-11 wiring; whitelist 3M-february-2018).
+`--chemistry`: 10x 3' v3 — stated in the paper methods (Chromium Single Cell 3' v3 with Feature Barcoding, CG000184 Rev C) and consistent with the measured 28-nt R1. Whitelist 3M-february-2018 (+ feature-barcode translation). NEEDS_HUMAN: confirm before T-11 wiring.
 
 ### Published assignment file (downloaded 2026-09-15)
 
@@ -45,6 +45,14 @@ Inspected with h5py (old anndata layout, categories under `obs/__categories`):
 - `gem_group == 4` (= FASTQ `lane_4`): **3,681 cells**, 1,610 distinct `sgID_AB` values, 120 `non-targeting` cells. It is the smallest group, consistent with `lane_4` being the smallest FASTQ set.
 - `sgID_AB` is a **dual-guide identity** (`GENE_+_pos.23-P1P2|GENE_-_pos.23-P1P2`): each vector carries two sgRNAs (A and B) against the same gene. 2,273 distinct values / 2,058 genes across the file. T-12/T-13 must therefore count and assign at the vector (A|B pair) level, or per sgRNA then reconcile; recorded as an input to `docs/decisions/005`.
 - The h5ad contains only cells that passed the authors' guide calling; unassigned/multiplet cells are absent, so concordance in T-16 is measured on the intersection of barcodes.
+
+### Guide library and read structure (verified 2026-09-15)
+
+- Library: paper Table S1 = PMC supplementary file `NIHMS1812939-supplement-11.xlsx` (md5 `b7554e4e9e741126067a7d3964a50523`, matches Europe PMC), sheet `TabB_K562_day6_library`. Archived at `~/ngs_data/replogle_library/`, extracted to `K562_day6_essential_library_pairs.csv`: **2,291 dual-sgRNA elements**, 2,062 genes + `non-targeting` (109 NT pairs), 4,582 protospacers (4,565 unique, all 20 nt). Columns: pair ID, gene, transcript, Ensembl id, sgID_A, protospacer A, sgID_B, protospacer B.
+- Kit: 10x 3' v3 with Feature Barcoding (CG000184 Rev C); vectors pJR85/pJR89 carry capture sequence 1 (cs1) in stem loop 2 of the sgRNA scaffold (Addgene 140095/140096).
+- R1 = 16 bp cell barcode + 12 bp UMI (28 nt). R2 = 98 nt: first 30 nt are TSO (`AAGCAGTGGTATCAACGCAGAGTACATGGG` in 95% of 8,000 reads sampled from `lane_5`), then the 20-nt protospacer starting at position 32 (69%), 31 (20%) or 33 (5%), then the scaffold constant: guide A followed by `GTTTCAGAGCTAAGCACAAGAGTGCATAGC…`, guide B by `GTTTAAGAGCTAAGCTGGAAACAGCATAGC…`. T-12 must anchor on the constant region (or search a window), not a fixed offset; the two scaffold variants tell A from B.
+- Whitelist: 3' v3 gel beads carry two barcode variants; feature-barcode reads use the variant that differs from GEX and must be translated with Cell Ranger's `3M-february-2018.txt.gz` two-column translation file (10x KB 360031133451). The pipeline must apply this translation before joining guide counts to GEX barcodes.
+- Authors' guide calling: Cell Ranger 4.0.0 counts; reads downsampled to 800/cell; two-component Poisson/Gaussian mixture on log2 UMI per guide, fit 100× per guide; cells kept if single guide or two guides of the same gene. Code: github.com/josephreplogle/guide_calling. This is the reference for T-13 method (b).
 
 ## Consequences
 
