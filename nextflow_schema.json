@@ -118,6 +118,12 @@
                     "minimum": 1,
                     "description": "Minimum top-1 / top-2 UMI ratio for a single assignment (threshold method). No default: set from the dataset.",
                     "fa_icon": "fas fa-divide"
+                },
+                "keep_nonsingle": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Keep multi/unassigned cells in the ALIVE h5ad with gene set to their status (inspection only). Default: exclude them (docs/decisions/006).",
+                    "fa_icon": "fas fa-filter"
                 }
             },
             "required": ["min_umi", "min_ratio"]
