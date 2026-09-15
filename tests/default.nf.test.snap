@@ -5,6 +5,12 @@
                 "FASTQC": {
                     "fastqc": "0.12.1"
                 },
+                "GUIDE_COUNT": {
+                    "kallistobustools": "0.28.2"
+                },
+                "GUIDE_INDEX": {
+                    "kallistobustools": "0.28.2"
+                },
                 "KALLISTOBUSTOOLS_COUNT": {
                     "kallistobustools": "0.28.2"
                 },
@@ -47,6 +53,24 @@
                 "fastqc/replogle_k562_lane4_test_guide_1_fastqc.zip",
                 "fastqc/replogle_k562_lane4_test_guide_2_fastqc.html",
                 "fastqc/replogle_k562_lane4_test_guide_2_fastqc.zip",
+                "guides",
+                "guides/replogle_k562_lane4_test",
+                "guides/replogle_k562_lane4_test/10x_fb_whitelist.txt",
+                "guides/replogle_k562_lane4_test/10x_feature_barcode_map.txt",
+                "guides/replogle_k562_lane4_test/counts_unfiltered",
+                "guides/replogle_k562_lane4_test/counts_unfiltered/adata.h5ad",
+                "guides/replogle_k562_lane4_test/counts_unfiltered/cells_x_features.barcodes.txt",
+                "guides/replogle_k562_lane4_test/counts_unfiltered/cells_x_features.genes.names.txt",
+                "guides/replogle_k562_lane4_test/counts_unfiltered/cells_x_features.genes.txt",
+                "guides/replogle_k562_lane4_test/counts_unfiltered/cells_x_features.mtx",
+                "guides/replogle_k562_lane4_test/guide_counts.h5ad",
+                "guides/replogle_k562_lane4_test/inspect.json",
+                "guides/replogle_k562_lane4_test/kb_info.json",
+                "guides/replogle_k562_lane4_test/matrix.ec",
+                "guides/replogle_k562_lane4_test/output.bus",
+                "guides/replogle_k562_lane4_test/output.unfiltered.bus",
+                "guides/replogle_k562_lane4_test/run_info.json",
+                "guides/replogle_k562_lane4_test/transcripts.txt",
                 "multiqc",
                 "multiqc/multiqc_data",
                 "multiqc/multiqc_data/fastqc-status-check-heatmap.txt",
@@ -113,6 +137,12 @@
                 "pipeline_info",
                 "pipeline_info/ngspipeline_software_mqc_versions.yml",
                 "reference",
+                "reference/guide_index",
+                "reference/guide_index/feature_map.tsv",
+                "reference/guide_index/features.tsv",
+                "reference/guide_index/kite.idx",
+                "reference/guide_index/mismatch.fa",
+                "reference/guide_index/t2g.txt",
                 "reference/kb_index",
                 "reference/kb_index/kb_ref_out.idx",
                 "reference/kb_index/t2g.txt"
@@ -129,6 +159,15 @@
                 "filter_barcodes.txt:md5,087ec8298103b58493243c92ffd8972f",
                 "matrix.ec:md5,63ef4d9e0cc9f3cf9f75a23c913be73f",
                 "transcripts.txt:md5,e39d18882a7d6d97c619dd9748ae5a6d",
+                "10x_fb_whitelist.txt:md5,1f2b4ba8a6fcfacf6dcf165ce09e974d",
+                "10x_feature_barcode_map.txt:md5,e18354644b3512f71533e7b5c494c698",
+                "adata.h5ad:md5,b1f12d1cffb0f35e2aedfb1e3f697481",
+                "cells_x_features.barcodes.txt:md5,06b48d8dfd661d6ba6791503fc537010",
+                "cells_x_features.genes.names.txt:md5,d37c3fa7318e5d13c219937cceab03a8",
+                "cells_x_features.genes.txt:md5,d37c3fa7318e5d13c219937cceab03a8",
+                "cells_x_features.mtx:md5,8773998c5a926a24c47873d804e096b1",
+                "matrix.ec:md5,ae90a96a3a60b11adee314a7da75536d",
+                "transcripts.txt:md5,fe6981b193031aea1c3585ef01fceeca",
                 "fastqc-status-check-heatmap.txt:md5,85752afd740d484905a144c3690ddcb2",
                 "fastqc_adapter_content_plot.txt:md5,5145dbfa8402f32e626ad26e92e7df7b",
                 "fastqc_overrepresented_sequences_plot.txt:md5,13213d66c1aac94524a82f8a37b3b41b",
@@ -142,15 +181,22 @@
                 "multiqc_citations.txt:md5,4c806e63a283ec1b7e78cdae3a923d4f",
                 "multiqc_fastqc.txt:md5,fd9064937a91d0f16049bee7a48b8497",
                 "multiqc_general_stats.txt:md5,ce545c0ae15fdbe6f80562607de82811",
+                "feature_map.tsv:md5,58d32f8270814ef2427075703ff4d415",
+                "features.tsv:md5,2934e36f77298c2ef47450eeb33684f0",
+                "mismatch.fa:md5,9fdfebf997bcc24e3fc1a69c45eb6379",
+                "t2g.txt:md5,5706cb2a8d2ca3ffa3fd9edbc1654af5",
                 "t2g.txt:md5,2755669b712f8f7f3bef31ebb2060674"
             ],
             {
                 "cells": 119,
                 "genes": 200,
-                "nnz": 15046
+                "nnz": 15046,
+                "guide_barcodes": 172,
+                "guide_features": 108,
+                "guide_nnz": 290
             }
         ],
-        "timestamp": "2026-09-15T15:46:02.191716",
+        "timestamp": "2026-09-15T15:59:12.534028",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
