@@ -54,6 +54,10 @@ Inspected with h5py (old anndata layout, categories under `obs/__categories`):
 - Whitelist: 3' v3 gel beads carry two barcode variants; feature-barcode reads use the variant that differs from GEX and must be translated with Cell Ranger's `3M-february-2018.txt.gz` two-column translation file (10x KB 360031133451). The pipeline must apply this translation before joining guide counts to GEX barcodes.
 - Authors' guide calling: Cell Ranger 4.0.0 counts; reads downsampled to 800/cell; two-component Poisson/Gaussian mixture on log2 UMI per guide, fit 100× per guide; cells kept if single guide or two guides of the same gene. Code: github.com/josephreplogle/guide_calling. This is the reference for T-13 method (b).
 
+### lane_4 ↔ gem_group 4 verified (2026-09-15)
+
+First 2,000,000 R1 reads of `SRR19330859` (`KD6_seq1_essential_mRNA_lane_4_S52_L004`, md5 OK): R1 length 28; 912,413 reads (45.6%) carry an exact 16-mer matching one of the 3,681 `gem_group == 4` barcodes, and **all 3,681 barcodes are observed**. The remaining reads are ambient/empty-droplet barcodes, as expected before cell calling.
+
 ## Consequences
 
 - T-01 DoD: download 12 runs from ENA, verify `fastq_md5` from the ENA filereport, download the h5ad and record the number of cells for `lane_4`.
