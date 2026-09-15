@@ -11,7 +11,7 @@ pipeline still runs its own index-building step.
 Everything is deterministic (fixed hash, sorted iteration, gzip mtime=0), so
 `sha256sum` of the outputs is stable across runs and machines.
 """
-import argparse, csv, gzip, hashlib, io, itertools, os, re, sys, time
+import argparse, csv, gzip, hashlib, io, itertools, os, re, subprocess, sys, time
 
 FRAC_DEN = 2**32
 
@@ -27,9 +27,14 @@ def open_gz_out(path):
 
 
 def fastq_records(path):
-    with gzip.open(path, "rt") as f:
-        for h, s, p, q in itertools.zip_longest(*[f] * 4):
-            yield h.rstrip("\n"), s.rstrip("\n"), q.rstrip("\n")
+    # external gzip is several times faster than Python's gzip module on 15 GB of input
+    proc = subprocess.Popen(["gzip", "-dc", path], stdout=subprocess.PIPE, bufsize=1 << 20)
+    f = io.TextIOWrapper(proc.stdout, encoding="ascii")
+    for h, s, p, q in itertools.zip_longest(*[f] * 4):
+        yield h.rstrip("\n"), s.rstrip("\n"), q.rstrip("\n")
+    proc.wait()
+    if proc.returncode != 0:
+        raise RuntimeError(f"gzip -dc failed on {path}")
 
 
 def extract_reads(runs, fastq_dir, barcodes, frac_of, out_r1, out_r2, tag):
@@ -69,7 +74,7 @@ def mini_genome(fasta_gz, gtf_gz, gene_ids, flank, out_fa, out_gtf):
                 continue
             parts = line.rstrip("\n").split("\t")
             gid = parse_attr(parts[8], "gene_id")
-            if gid not in gene_ids:
+            if gid not in gene_ids or parts[2] not in ("gene", "transcript", "exon"):
                 continue
             lines_by_gene.setdefault(gid, []).append(parts)
             if parts[2] == "gene":
@@ -201,13 +206,11 @@ def main():
         st.write(f"guide reads in={s_in} out={s_out}; cells with guide reads={sum(1 for r in sel if r['kind']=='cell' and r['fb_barcode'] in s_per)}/{len(cells)}\n")
         st.write(f"mini genome genes={n_genes} flank={a.flank}; library vectors={n_vec}\n")
         st.write(f"params gex_frac={a.gex_frac} bg_frac={a.bg_frac} guide_frac={a.guide_frac}\n")
+    generated = ["gex_R1.fastq.gz", "gex_R2.fastq.gz", "guide_R1.fastq.gz", "guide_R2.fastq.gz",
+                 "ref/mini_genome.fa.gz", "ref/mini_genome.gtf.gz"]
     with open(os.path.join(a.outdir, "SHA256SUMS"), "w") as sh:
-        for root, _, files in sorted(os.walk(a.outdir)):
-            for fn in sorted(files):
-                if fn in ("SHA256SUMS", "STATS.txt"):
-                    continue
-                p = os.path.join(root, fn)
-                sh.write(f"{sha256(p)}  {os.path.relpath(p, a.outdir)}\n")
+        for rel in generated:
+            sh.write(f"{sha256(os.path.join(a.outdir, rel))}  {rel}\n")
     print(open(os.path.join(a.outdir, "STATS.txt")).read(), f"elapsed {time.time()-t0:.0f}s")
 
 

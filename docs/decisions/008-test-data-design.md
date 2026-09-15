@@ -22,9 +22,21 @@ Option 3, with:
 
 - **Cells**: 120 authors-called cells from `gem_group 4` = the 24 most frequent dual-guide vectors × 4 cells + 24 non-targeting cells (`assets/test_data/selected_barcodes.tsv`, with the feature-barcode variant and the authors' `sgID_AB` as ground truth for nf-test).
 - **Background**: 300 whitelisted barcodes that are not cells (20–200 reads in the first 4 M reads), kept at full depth, so cell calling has empty droplets to remove.
-- **Fractions**: GEX 0.05 of UMI families per cell; guide library 0.2. Tuned to ≤ 20 MB total.
+- **Fractions**: GEX 0.05 of UMI families per selected cell, 0.02 for background barcodes, 0.1 for the guide library. A first attempt with background at 1.0 produced 116 MB (300 background barcodes carry ~6,000 reads each over the full lane); the final settings give 18 MB.
 - **Reference**: "mini genome" = one contig per gene for the 200 most-expressed genes in `gem_group 4` (`selected_genes.tsv`), locus ± 500 bp, GTF rewritten to contig coordinates. The pipeline builds its own index from it, so no stage is bypassed. Reads from other genes stay in the FASTQ and simply do not map (expected mapping rate is low and is documented, not tuned).
 - **Guide library**: the 24 selected vectors + 6 vectors absent from the cells (zero columns) as `guide_id,target_gene,protospacer,vector_id`; two rows per vector (sgRNA A and B).
+
+## Result (2026-09-15)
+
+| Output                              | Content                                                                       | Size                        |
+| ----------------------------------- | ----------------------------------------------------------------------------- | --------------------------- |
+| `gex_R1/R2.fastq.gz`                | 203,728 read pairs from 235,218,732 (all 120 cells have reads)                | 2.8 + 8.6 MB                |
+| `guide_R1/R2.fastq.gz`              | 57,982 read pairs from 19,749,653 (all 120 cells have guide reads)            | 0.8 + 1.1 MB                |
+| `ref/mini_genome.fa.gz` / `.gtf.gz` | 200 contigs; gene/transcript/exon features only                               | 1.4 + 0.8 MB                |
+| `guide_library_test.csv`            | 54 vectors (24 targeting + 24 NT present in cells + 6 absent), 108 sgRNA rows | 11 kB                       |
+| total `assets/test_data`            |                                                                               | **18 MB** (`du -sk` 18,176) |
+
+Generation takes ~140 s on the MacBook; two independent runs give identical `sha256` for all six generated files.
 
 ## Consequences
 
