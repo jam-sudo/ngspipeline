@@ -151,6 +151,25 @@
                     "description": "Extra sbatch options appended to every job.",
                     "fa_icon": "fas fa-cog",
                     "hidden": true
+                },
+                "aws_queue": {
+                    "type": "string",
+                    "description": "AWS Batch job queue for -profile awsbatch. Required with that profile.",
+                    "fa_icon": "fab fa-aws",
+                    "hidden": true
+                },
+                "aws_region": {
+                    "type": "string",
+                    "description": "AWS region of the Batch queue and S3 bucket.",
+                    "fa_icon": "fab fa-aws",
+                    "hidden": true
+                },
+                "aws_cli": {
+                    "type": "string",
+                    "default": "/home/ec2-user/miniconda/bin/aws",
+                    "description": "Path of the AWS CLI inside the Batch compute-environment AMI (docs/aws_setup.md).",
+                    "fa_icon": "fab fa-aws",
+                    "hidden": true
                 }
             }
         },
