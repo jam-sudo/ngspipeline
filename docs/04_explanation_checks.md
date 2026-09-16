@@ -179,3 +179,11 @@ Numbering: `T-xx.n` = question n of the PR for task T-xx (PR bodies #1–#19).
 **T-14b.2 다섯 번째 모듈을 만들지 않고 같은 모듈의 alias로 처리한 이유와 대가.** 규칙 4는 로컬 모듈을 네 개로 제한한다. 풀링은 "counts + assignment → h5ad"라는 같은 변환을 N개 입력에 적용하는 것이므로 스크립트와 프로세스를 일반화(`--sample/--counts-dir/--assignment` 리스트)하고 `TO_ALIVE_H5AD as TO_ALIVE_H5AD_POOLED`로 두 번 호출했다. 대가는 프로세스 입력 시그니처가 `val(samples)` 리스트를 갖게 되어 단일 샘플 호출도 `[meta, [meta.id], dir, tsv]`로 감싸야 한다는 점이고, 이름 불일치를 스크립트가 검사한다.
 
 **T-14b.3 단일 샘플 출력이 바이트 단위로 그대로여야 하는 이유와 확인 방법.** docs/03의 F7 해시(`305e31d1…`, `a801cc23…`)는 "같은 코드가 같은 바이트를 만든다"는 증빙인데, 풀링 기능이 `uns`에 키를 추가하면 같은 입력에서 다른 바이트가 나와 과거 해시가 무효가 된다. 그래서 새 `uns` 키는 pooled일 때만 쓰고, 테스트 프로파일을 다시 돌려 sha256이 `a801cc23…`로 같음을 확인했다. 스냅샷 변경은 새 사이드카 파일 한 줄뿐이며 기존 기대값은 건드리지 않았다.
+
+## T-05 Nextflow 기초 노트 (PR #29)
+
+**T-05.1 scrnaseq의 `ch_mtx_matrices = Channel.empty().mix(...)` 패턴이 하는 일.** 다섯 정렬기 중 하나만 `if`로 실행되므로 하류는 "어느 정렬기의 출력이든 같은 모양의 채널 하나"를 받아야 한다. 빈 채널에서 시작해 실행된 분기의 출력만 `mix`로 섞으면, 실행되지 않은 분기는 아무것도 보태지 않는다. 우리 `ch_pooled = pool_alive ? ... : channel.empty()`도 같은 원리다.
+
+**T-05.2 실행 DAG(`pipeline_dag.html`)와 코드의 차이.** DAG는 한 번의 실행에서 실제로 태스크가 생긴 프로세스와 채널만 그린다. 코드에 있는 kallisto/simpleaf/cellranger 분기는 test 프로파일(STAR)에서는 나타나지 않는다. 그래서 "파이프라인이 무엇을 할 수 있는가"는 코드에서, "이번에 무엇을 했는가"는 DAG와 trace에서 읽어야 한다.
+
+**T-05.3 Nextflow 26.04.6이 scrnaseq 4.0.0의 설정을 거부한 이유와 대응.** 26.x의 엄격 설정 파서는 `includeConfig`가 가리키는 파일 부재와 문자열 안의 `${manifest.version}` 참조를 오류로 본다(우리 저장소도 같은 이유로 `while`·슬래시 정규식을 걷어냈다). 훈련 목적의 실행이므로 파이프라인을 고치지 않고 공식 런처의 `NXF_VER=25.10.4`로 돌렸고, 이 사실을 노트에 적었다.
