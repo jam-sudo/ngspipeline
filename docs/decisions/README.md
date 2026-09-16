@@ -10,6 +10,6 @@
 | 005 | Guide count method (kite vs direct match)                      | T-12 | not started                           |
 | 006 | Non-single cell handling in ALIVE h5ad                         | T-14 | not started                           |
 | 007 | ALIVE loader gap (only if it occurs)                           | T-14 | not started                           |
-| 008 | Test-profile data design (UMI-family subsampling, mini genome) | T-10 | draft                                 |
+| 008 | Test-profile data design (UMI-family subsampling, mini genome) | T-10 | accepted (2026-09-15)                 |
 
 Rule: a choice that is not in a record here does not exist. Agent drafts; human sets `Status: accepted (date)`.
