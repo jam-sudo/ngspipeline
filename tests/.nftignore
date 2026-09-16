@@ -10,3 +10,9 @@ multiqc/multiqc_plots/{svg,pdf,png}/*.{svg,pdf,png}
 multiqc/multiqc_report.html
 fastqc/*_fastqc.{html,zip}
 pipeline_info/*.{html,json,txt,yml}
+counts/*/kb_info.json
+counts/*/run_info.json
+counts/*/inspect.json
+counts/*/*.bus
+counts/*/10x_version3_whitelist.txt
+reference/kb_index/*.idx

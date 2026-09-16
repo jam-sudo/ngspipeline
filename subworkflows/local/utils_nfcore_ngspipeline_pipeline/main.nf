@@ -85,23 +85,16 @@ workflow PIPELINE_INITIALISATION {
     // Create channel from input file provided through params.input
     //
 
+    // Relative FASTQ paths are resolved against the samplesheet's own directory so the
+    // committed test samplesheet works from any launch directory.
+    def samplesheet_dir = file(input).parent
     channel
         .fromList(samplesheetToList(input, "${projectDir}/assets/schema_input.json"))
         .map {
-            meta, fastq_1, fastq_2 ->
-                if (!fastq_2) {
-                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
-                } else {
-                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
-                }
-        }
-        .groupTuple()
-        .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
-        }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
+            meta, gex_r1, gex_r2, guide_r1, guide_r2 ->
+                def gex   = [ gex_r1, gex_r2 ].collect { resolveSamplesheetPath(it, samplesheet_dir) }
+                def guide = [ guide_r1, guide_r2 ].collect { resolveSamplesheetPath(it, samplesheet_dir) }
+                return [ meta, gex, guide ]
         }
         .set { ch_samplesheet }
 
@@ -144,18 +137,15 @@ workflow PIPELINE_COMPLETION {
 */
 
 //
-// Validate channels from input samplesheet
+// Resolve a samplesheet path: absolute paths and URIs as given, relative paths against the samplesheet directory
 //
-def validateInputSamplesheet(input) {
-    def (metas, fastqs) = input[1..2]
-
-    // Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
-    def endedness_ok = metas.collect{ meta -> meta.single_end }.unique().size == 1
-    if (!endedness_ok) {
-        error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
+def resolveSamplesheetPath(p, samplesheet_dir) {
+    def s = p.toString()
+    def f = (s.startsWith('/') || s =~ /^[A-Za-z][A-Za-z0-9+.-]*:\/\//) ? file(s) : file("${samplesheet_dir}/${s}")
+    if (!f.exists()) {
+        error("Please check input samplesheet -> FASTQ file does not exist: ${s} (resolved to ${f})")
     }
-
-    return [ metas[0], fastqs ]
+    return f
 }
 //
 // Generate methods description for MultiQC
