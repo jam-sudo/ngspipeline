@@ -13,71 +13,120 @@
 
 ## Introduction
 
-**jam-sudo/ngspipeline** is a bioinformatics pipeline that ...
+**Status: in development** (v0.1.0dev). Nothing in this README is a claim of completion until the corresponding row in [`docs/progress.md`](docs/progress.md) is marked done with evidence.
 
-<!-- TODO nf-core:
-   Complete this sentence with a 2-3 sentence summary of what types of data the pipeline ingests, a brief overview of the
-   major pipeline sections and the types of output it produces. You're giving an overview to someone new
-   to nf-core here, in 15-20 seconds. For an example, see https://github.com/nf-core/rnaseq/blob/master/README.md#introduction
--->
+**jam-sudo/ngspipeline** turns raw Perturb-seq reads into an analysis-ready dataset for [ALIVE](https://github.com/jam-sudo/alive): FASTQ → gene-expression (GEX) and sgRNA count matrices → per-cell guide assignment → an ALIVE-ready `.h5ad`. It is a Nextflow DSL2 pipeline built on the nf-core template and nf-core modules; the four steps that have no nf-core module are hand-written local modules.
 
-<!-- TODO nf-core: Include a figure that guides the user through the major workflow steps. Many nf-core
-     workflows use the "tube map" design for that. See https://nf-co.re/docs/community/brand/workflow-schematics#examples for examples.   -->
-<!-- TODO nf-core: Fill in short bullet-pointed list of the default steps in the pipeline -->1. Read QC ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/))2. Present QC for raw reads ([`MultiQC`](http://multiqc.info/))
+```mermaid
+flowchart LR
+    subgraph inputs
+        SS[samplesheet.csv<br/>GEX + guide FASTQ per run]
+        GL[guide_library.csv]
+        REF[--fasta + --gtf<br/>or --reference_index]
+    end
+    SS --> FQ[FASTQC<br/>nf-core]
+    REF --> KBR[KALLISTOBUSTOOLS_REF<br/>nf-core, kb ref]
+    KBR --> KBC[KALLISTOBUSTOOLS_COUNT<br/>nf-core, kb count + bustools cell filter]
+    SS --> KBC
+    GL --> GI[GUIDE_INDEX<br/>local, kb ref --workflow kite]
+    GI --> GC[GUIDE_COUNT<br/>local, kb count kite:10xFB]
+    SS --> GC
+    KBC --> GA[GUIDE_ASSIGN<br/>local, threshold or mixture]
+    GC --> GA
+    KBC --> H5[TO_ALIVE_H5AD<br/>local]
+    GA --> H5
+    FQ --> MQ[MULTIQC<br/>nf-core + custom content]
+    KBC --> MQ
+    GC --> MQ
+    GA --> MQ
+    H5 --> OUT[(alive/&lt;sample&gt;.h5ad)]
+```
+
+1. Read QC of both libraries ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
+2. GEX quantification with [kallisto|bustools](https://www.kallistobus.tools/) (`kb ref` on `--fasta`/`--gtf`, or a prebuilt `--reference_index`; `kb count --filter bustools` for empty-droplet removal). Native kb output is kept as-is ([decision 002](docs/decisions/002-quantifier.md)).
+3. Guide counting with the kb **kite** workflow: protospacers indexed with Hamming-1 variants, `kite:10xFB` translates the 10x 3' v3 feature-barcode variant to the GEX barcode ([005](docs/decisions/005-guide-count-method.md)).
+4. Per-cell guide (vector) assignment, `--assign_method threshold` or `mixture` (Poisson/Gaussian on log2 UMI, Replogle et al.), with every evidence column in `assignment.tsv`.
+5. `alive/<sample>.h5ad`: raw counts + assignment; non-single cells excluded by default ([006](docs/decisions/006-nonsingle-cells.md), schema in [`docs/alive_schema.md`](docs/alive_schema.md)).
+6. One [MultiQC](https://multiqc.info/) report with FastQC, quantification statistics and the guide-assignment section.
 
 ## Usage
 
 > [!NOTE]
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup/overview) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/run-your-first-pipeline) with `-profile test` before running the workflow on actual data.
+> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/introduction#check-your-nextflow-installation) with `-profile test` before running the workflow on actual data.
 
-<!-- TODO nf-core: Describe the minimum required steps to execute the pipeline, e.g. how to prepare samplesheets.
-     Explain what rows and columns represent. For instance (please edit as appropriate):
+### Inputs
 
-First, prepare a samplesheet with your input data that looks as follows:
-
-`samplesheet.csv`:
+`samplesheet.csv` — one row per sequencing run; rows with the same `sample_id` are merged (GEX pairs from every row, guide pairs from the rows that carry them). Relative paths are resolved against the samplesheet's directory.
 
 ```csv
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
+sample_id,gex_r1,gex_r2,guide_r1,guide_r2,expected_cells
+sampleA,run1_gex_R1.fastq.gz,run1_gex_R2.fastq.gz,run1_guide_R1.fastq.gz,run1_guide_R2.fastq.gz,3681
+sampleA,run2_gex_R1.fastq.gz,run2_gex_R2.fastq.gz,,,3681
 ```
 
-Each row represents a fastq file (single-end) or a pair of fastq files (paired end).
+`guide_library.csv` — one row per sgRNA: `guide_id,target_gene,protospacer[,vector_id]`. `vector_id` groups the sgRNAs of one vector (dual-guide libraries); non-targeting controls have `target_gene` = `non-targeting`.
 
--->
+Reference: `--fasta` + `--gtf` (the pipeline builds the kb index) or `--reference_index <dir>` containing `*.idx` and `t2g.txt` (see `bin/build_reference_index.sh` and [002](docs/decisions/002-quantifier.md) for why a prebuilt index is used for the full human reference on small machines).
 
-Now, you can run the pipeline using:
+`--chemistry` (`10XV2` | `10XV3`) selects the 10x whitelist and read layout and must be set from the dataset's protocol ([001](docs/decisions/001-dataset.md)). `--min_umi` and `--min_ratio` have no defaults; pass them with `-params-file` (see the note below).
 
-<!-- TODO nf-core: update the following command to include all required parameters for a minimal example -->
+### Run
 
 ```bash
-nextflow run jam-sudo/ngspipeline \
-   -profile <docker/singularity/.../institute> \
-   --input samplesheet.csv \
+nextflow run jam-sudo/ngspipeline -profile <docker/singularity/...>,local \
+   --input samplesheet.csv --guides guide_library.csv \
+   --reference_index /path/to/kb_index --chemistry 10XV3 \
+   -params-file assign_params.yml \
    --outdir <OUTDIR>
 ```
 
+`assign_params.yml`:
+
+```yaml
+assign_method: threshold
+min_umi: 5
+min_ratio: 3
+```
+
+> [!NOTE]
+> `--min_ratio 3` on the command line is currently rejected by the parameter validation (parsed as a string on this parameter name); a params file works.
+
 > [!WARNING]
-> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/running/run-pipelines#using-parameter-files).
+> Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
+
+Test profile (18 MB subsample of a real Perturb-seq sample, see [`assets/test_data/README.md`](assets/test_data/README.md) and [008](docs/decisions/008-test-data-design.md)):
+
+```bash
+nextflow run . -profile test,docker --outdir results
+```
+
+### Outputs (`--outdir`)
+
+```
+counts/<sample>/                      kb count native output (counts_unfiltered/, counts_filtered/, *.bus, run_info.json, ...)
+guides/<sample>/guide_counts.h5ad     cells x guides (all barcodes; kite)
+guides/<sample>/assignment.tsv        cell_barcode, guide_id, target_gene, method, top1_umi, top2_umi, ratio, posterior, status{single,multi,unassigned}, ...
+guides/<sample>/assignment_summary.tsv
+alive/<sample>.h5ad                   counts + assignment (obs: cell_barcode, gene, guide_id, target_gene, assignment_status, assignment_confidence, assignment_method, ...)
+reference/{kb_index,guide_index}/     indices built in-pipeline
+multiqc/multiqc_report.html
+pipeline_info/{execution_report,execution_timeline,execution_trace,pipeline_dag}
+```
+
+## Development
+
+- Tasks, Definitions of Done and evidence: [`PLAN.md`](PLAN.md), [`docs/progress.md`](docs/progress.md).
+- Decision records (dataset, quantifier, dev host, naming, guide counting, non-single cells, test data): [`docs/decisions/`](docs/decisions/README.md).
+- Validation against the authors' guide identities: [`docs/01_guide_assignment_validation.md`](docs/01_guide_assignment_validation.md).
+- Unit tests: `nf-test test .` (module tests under `modules/local/*/tests`, pipeline test in `tests/`).
 
 ## Credits
 
-jam-sudo/ngspipeline was originally written by Jae Min Yoon.
-
-We thank the following people for their extensive assistance in the development of this pipeline:
-
-<!-- TODO nf-core: If applicable, make list of people who have also contributed -->
-
-## Contributions and Support
-
-If you would like to contribute to this pipeline, please see the [contributing guidelines](docs/CONTRIBUTING.md).
+jam-sudo/ngspipeline was written by Jae Min Yoon with Claude Code as the implementing agent; every task is reviewed and its Definition of Done executed by the human ([`CLAUDE.md`](CLAUDE.md)).
 
 ## Citations
 
-<!-- TODO nf-core: Add citation for pipeline after first release. Uncomment lines below and update Zenodo doi and badge at the top of this file. -->
-<!-- If you use jam-sudo/ngspipeline for your analysis, please cite it using the following doi: [10.5281/zenodo.XXXXXX](https://doi.org/10.5281/zenodo.XXXXXX) -->
-
-<!-- TODO nf-core: Add bibliography of tools and data used in your pipeline -->
+Data used for testing and validation: Replogle et al. 2022, _Cell_ 185(14):2559–2575, [doi:10.1016/j.cell.2022.05.013](https://doi.org/10.1016/j.cell.2022.05.013) (SRA PRJNA831566; processed data CC BY 4.0).
 
 An extensive list of references for the tools used by the pipeline can be found in the [`CITATIONS.md`](CITATIONS.md) file.
 
@@ -85,6 +134,6 @@ This pipeline uses code and infrastructure developed and maintained by the [nf-c
 
 > **The nf-core framework for community-curated bioinformatics pipelines.**
 >
-> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Maxime Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
+> Philip Ewels, Alexander Peltzer, Sven Fillinger, Harshil Patel, Johannes Alneberg, Andreas Wilm, Matthias Ulysse Garcia, Paolo Di Tommaso & Sven Nahnsen.
 >
 > _Nat Biotechnol._ 2020 Feb 13. doi: [10.1038/s41587-020-0439-x](https://dx.doi.org/10.1038/s41587-020-0439-x).
