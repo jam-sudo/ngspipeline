@@ -1,0 +1,27 @@
+# F4 — nf-test test tests/ (and module tests) on dev tip 67c7f84 (2026-09-16T16:38:14Z)
+```
+
+🚀 nf-test 0.9.5
+https://www.nf-test.com
+Please cite: https://doi.org/10.1093/gigascience/giaf130
+(c) 2021 - 2026 Lukas Forer and Sebastian Schoenherr
+
+Load .nf-test/plugins/nft-utils/0.0.3/nft-utils-0.0.3.jar
+
+GUIDE_ASSIGN on a synthetic guide matrix (T-13 DoD)
+
+  Test [5d0e988a] 'threshold: five edge cells get the designed status' PASSED (3.774s)
+  Test [7c0b97a6] 'mixture: five edge cells get the designed status' PASSED (4.34s)
+
+GUIDE_INDEX + GUIDE_COUNT on synthetic reads (T-12 DoD)
+
+  Test [c0c16d41] 'kite:10xFB counts exactly the designed UMIs' PASSED (59.02s)
+
+Test pipeline
+
+  Test [36dc871d] '-profile test' PASSED (91.899s)
+
+
+SUCCESS: Executed 4 tests in 159.105s
+
+```

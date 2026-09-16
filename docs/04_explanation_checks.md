@@ -139,3 +139,11 @@ Numbering: `T-xx.n` = question n of the PR for task T-xx (PR bodies #1–#19).
 **T-13b.2 T-16 표를 다시 계산하지 않는 이유.** 그 표는 "5/3으로 돌렸을 때의 발견"이며, 기본값을 바꾼 뒤 재계산해 더 좋아지거나 나빠진 수치를 싣는 순간 임계값 선택이 결과에 의존하게 된다. 새 기본값의 효과는 009에 "752세포가 min_umi 아래"로 기록했고, 다음 전체 실행부터 10/3이 적용된다.
 
 **T-13b.3 테스트 프로파일이 5/3인 이유.** 테스트 데이터는 guide 리드를 10 %만 남겼으므로 세포당 guide UMI가 실제의 약 1/10이다. 기본값 10을 쓰면 대부분 세포가 unassigned가 되어 할당·h5ad 단계가 검증되지 않는다. 그래서 테스트 전용으로 5/3을 명시하고, 이 값이 운영 기본값이 아님을 `conf/test.config` 주석에 적었다.
+
+## T-40 README 완성·DoD 재검증 (PR #21)
+
+**T-40.1 도커와 Apptainer의 h5ad가 바이트 단위로 같은 이유, awsbatch에서 달라질 수 있는 지점.** 두 실행은 같은 컨테이너 이미지(같은 다이제스트의 kb-python 0.28.2, kallisto/bustools 바이너리)를 쓰고, 파이프라인 스크립트(`guide_assign.py`, `to_alive_h5ad.py`)는 난수나 시각을 쓰지 않으며 anndata는 h5ad에 기록 시각을 넣지 않는다. 그래서 엔진이 달라도 입력·코드·바이너리가 같으면 출력 바이트가 같다. awsbatch에서 달라질 수 있는 지점은 (1) 이미지 태그가 같아도 재빌드된 다른 다이제스트를 당겨오는 경우, (2) kallisto가 다른 CPU 수로 돌아 `matrix.ec` 같은 비결정적 중간 파일이 바뀌는 경우(단, h5ad는 `cells_x_genes.mtx`만 읽으므로 이 경우는 h5ad에 영향이 없다), (3) 스테이징 과정에서 FASTQ가 잘리는 등의 입력 차이다. 그래서 docs/03은 해시가 다르면 `obs`/`var`/`X`를 수치로 비교해 원인을 적도록 해 두었다.
+
+**T-40.2 F5를 dev 커밋이 아니라 PR head 커밋으로 세는 이유.** nf-core 템플릿의 CI 워크플로는 `pull_request` 이벤트에서만 돌고, dev로의 병합 커밋에는 실행이 없다. 대신 브랜치 보호가 nf-core lint와 pre-commit 체크 통과를 병합 조건으로 강제하므로, dev의 모든 병합 커밋은 "녹색이었던 PR head"에 대응한다. 따라서 "최근 10커밋 CI 녹색"의 실체는 최근 10개 PR head 커밋의 실행 결과이며, docs-only PR은 nf-test가 paths-ignore로 건너뛰어 lint만 도는 점을 progress에 명시했다.
+
+**T-40.3 같은 테스트 데이터에서 Apptainer 실행이 도커보다 느린(155 s vs 93 s) 이유로 측정된 것과 추정인 것.** 측정된 것: 프로세스별 realtime에서 GUIDE_COUNT 46 s, KALLISTOBUSTOOLS_COUNT 40 s로 두 무거운 단계가 도커 실행보다 길고, 나머지 단계는 수 초 차이다. 추정(검증하지 않음): Apptainer는 amd64 SIF를 VM 안에서 Rosetta binfmt로 실행하고 도커는 colima의 Rosetta 통합 경로로 실행해 에뮬레이션 경로가 다르며, SIF 캐시가 있어도 실행 시 이미지 마운트·오버레이 준비 비용이 매 프로세스마다 든다. 이 차이는 결과 바이트에 영향이 없으므로 F3 판정과 무관하고, README 실행 통계에는 두 수치를 그대로 적었다.

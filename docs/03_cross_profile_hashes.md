@@ -9,3 +9,14 @@ Sample: Replogle 2022 K562 essential `lane_4` (001). Command per profile: PLAN.m
 | awsbatch,docker   | AWS Batch — human-executed      | pending                                                            |            | T-31                                                    |
 
 If hashes differ, compare `obs`, `var` and `X` numerically (PLAN.md T-31 note) with `bin/check_alive_schema.py`-style scripts and record the cause here instead of the hash.
+
+## Test profile, cross-engine (dev tip 67c7f84, 2026-09-16)
+
+Same 18 MB test data, same host (MacBook / colima VM), Docker vs Apptainer:
+
+| profile            | engine                               | h5ad sha256                                                        | wall  |
+| ------------------ | ------------------------------------ | ------------------------------------------------------------------ | ----- |
+| `test,docker`      | Docker 28 in colima                  | `a801cc23a85d20c3e5122f88da84dbf1dcc9886a6a44cd0330cdd6fd10816427` | 93 s  |
+| `test,singularity` | Apptainer 1.5.3 inside the colima VM | `a801cc23a85d20c3e5122f88da84dbf1dcc9886a6a44cd0330cdd6fd10816427` | 155 s |
+
+Identical bytes, so the container engine does not change the h5ad; the F7 comparison across schedulers (slurm, awsbatch) remains open. Evidence: `docs/evidence/T-40_F2_*`, `docs/evidence/T-40_F3_test_singularity.txt`.
