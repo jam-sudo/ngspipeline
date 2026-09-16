@@ -21,7 +21,7 @@ Document roles — read in this order:
 - Dev host: MacBook + colima (Rosetta; Apptainer in the VM for singularity) — docs/decisions/003-dev-host.md (accepted)
 - Dataset: Replogle 2022 K562 essential lane_4 — docs/decisions/001-dataset.md (accepted); chemistry 10XV3 confirmed
 - Quantifier: kallisto|bustools, prebuilt cDNA index for the full reference — docs/decisions/002-quantifier.md (accepted)
-- Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35058382108 (T-13b, nf-test) and …/35117807351 (T-05b, lint); dev contains PRs #2–#20; F5 at 8/10 green PR commits
+- Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35124448158 (T-40, nf-test + lint); dev contains PRs #2–#22; F5 done (10 green PR commits)
 - Open learning debt: none recorded; reference answers to the 48 explanation-check questions are in docs/04_explanation_checks.md (written by the agent under delegation, 2026-09-16)
 
 ## Rules
