@@ -113,6 +113,19 @@ multiqc/multiqc_report.html
 pipeline_info/{execution_report,execution_timeline,execution_trace,pipeline_dag}
 ```
 
+## Run statistics
+
+Sample: Replogle 2022 K562 essential-scale, GEM group `lane_4` (235 M GEX read pairs, 19.7 M guide read pairs; [001](docs/decisions/001-dataset.md)), prebuilt cDNA index, `--assign_method threshold`.
+
+| profile             | host                                                  | wall time                                                            | peak memory (process)            | cost | notes                                                                                                               |
+| ------------------- | ----------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------- |
+| `local,docker`      | MacBook M5 Pro 24 GB, colima 8 CPU / 20 GB, Rosetta   | 2 h 23 min (≈ 50 min without an operator-interrupted FastQC attempt) | 15.9 GB (KALLISTOBUSTOOLS_COUNT) | $0   | [docs/01](docs/01_guide_assignment_validation.md), [T-16 trace](docs/evidence/T-16_execution_trace_lane4_local.txt) |
+| `test,singularity`  | colima VM (Apptainer 1.5.3, aarch64 + Rosetta binfmt) | 2 min 31 s (test profile)                                            | 9.2 GB (GUIDE_COUNT)             | $0   | T-23                                                                                                                |
+| `slurm,singularity` | Discovery — pending (T-30)                            |                                                                      |                                  |      | waived if no account                                                                                                |
+| `awsbatch,docker`   | AWS Batch — pending (T-31, human-executed, ≤ $100)    |                                                                      |                                  |      |                                                                                                                     |
+
+Per-process realtime and RSS for the local run are in the T-16 validation document.
+
 ## Development
 
 - Tasks, Definitions of Done and evidence: [`PLAN.md`](PLAN.md), [`docs/progress.md`](docs/progress.md).
