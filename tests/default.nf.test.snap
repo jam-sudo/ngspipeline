@@ -20,11 +20,16 @@
                 "KALLISTOBUSTOOLS_REF": {
                     "kallistobustools": "0.28.2"
                 },
+                "TO_ALIVE_H5AD": {
+                    "anndata": "0.9.2"
+                },
                 "Workflow": {
                     "jam-sudo/ngspipeline": "v0.1.0dev"
                 }
             },
             [
+                "alive",
+                "alive/replogle_k562_lane4_test.h5ad",
                 "counts",
                 "counts/replogle_k562_lane4_test",
                 "counts/replogle_k562_lane4_test/10x_version3_whitelist.txt",
@@ -220,7 +225,7 @@
                 "guide_nnz": 290
             }
         ],
-        "timestamp": "2026-09-15T16:17:34.69278",
+        "timestamp": "2026-09-15T16:23:21.979527",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
