@@ -37,6 +37,11 @@ workflow JAMSUDO_NGSPIPELINE {
     //
     NGSPIPELINE (
         samplesheet,
+        params.fasta,
+        params.gtf,
+        params.reference_index,
+        params.chemistry,
+        params.kb_workflow,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,

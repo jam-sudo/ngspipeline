@@ -2,32 +2,44 @@
     "$schema": "https://json-schema.org/draft/2020-12/schema",
     "$id": "https://raw.githubusercontent.com/jam-sudo/ngspipeline/master/assets/schema_input.json",
     "title": "jam-sudo/ngspipeline pipeline - params.input schema",
-    "description": "Schema for the file provided with params.input",
+    "description": "Schema for the file provided with params.input: one Perturb-seq sample per row with its gene-expression (GEX) and guide (sgRNA) library FASTQs. Relative paths are resolved against the samplesheet's directory.",
     "type": "array",
     "items": {
         "type": "object",
         "properties": {
-            "sample": {
+            "sample_id": {
                 "type": "string",
                 "pattern": "^\\S+$",
-                "errorMessage": "Sample name must be provided and cannot contain spaces",
+                "errorMessage": "sample_id must be provided and cannot contain spaces",
                 "meta": ["id"]
             },
-            "fastq_1": {
+            "gex_r1": {
                 "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^([\\S\\s]*\\/)?[^\\s\\/]+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 1 must be provided, cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "gex_r1 (cell barcode + UMI read) must be a .fastq.gz / .fq.gz path without spaces"
             },
-            "fastq_2": {
+            "gex_r2": {
                 "type": "string",
-                "format": "file-path",
-                "exists": true,
-                "pattern": "^([\\S\\s]*\\/)?[^\\s\\/]+\\.f(ast)?q\\.gz$",
-                "errorMessage": "FastQ file for reads 2 cannot contain spaces and must have extension '.fq.gz' or '.fastq.gz'"
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "gex_r2 (cDNA read) must be a .fastq.gz / .fq.gz path without spaces"
+            },
+            "guide_r1": {
+                "type": "string",
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "guide_r1 (cell barcode + UMI read of the sgRNA library) must be a .fastq.gz / .fq.gz path without spaces"
+            },
+            "guide_r2": {
+                "type": "string",
+                "pattern": "^\\S+\\.f(ast)?q\\.gz$",
+                "errorMessage": "guide_r2 (protospacer read of the sgRNA library) must be a .fastq.gz / .fq.gz path without spaces"
+            },
+            "expected_cells": {
+                "type": "integer",
+                "minimum": 1,
+                "errorMessage": "expected_cells must be a positive integer",
+                "meta": ["expected_cells"]
             }
         },
-        "required": ["sample", "fastq_1"]
+        "required": ["sample_id", "gex_r1", "gex_r2", "guide_r1", "guide_r2", "expected_cells"]
     }
 }
