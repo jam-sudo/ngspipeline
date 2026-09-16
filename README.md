@@ -107,6 +107,8 @@ guides/<sample>/guide_counts.h5ad     cells x guides (all barcodes; kite)
 guides/<sample>/assignment.tsv        cell_barcode, guide_id, target_gene, method, top1_umi, top2_umi, ratio, posterior, status{single,multi,unassigned}, ...
 guides/<sample>/assignment_summary.tsv
 alive/<sample>.h5ad                   counts + assignment (obs: cell_barcode, gene, guide_id, target_gene, assignment_status, assignment_confidence, assignment_method, ...)
+alive/pooled.h5ad                     with --pool_alive and > 1 sample: all samples, obs index <barcode>-<sample_id> (docs/decisions/011)
+alive/<id>.alive_summary.json         cells, labels, status counts per h5ad
 reference/{kb_index,guide_index}/     indices built in-pipeline
 multiqc/multiqc_report.html
 pipeline_info/{execution_report,execution_timeline,execution_trace,pipeline_dag}

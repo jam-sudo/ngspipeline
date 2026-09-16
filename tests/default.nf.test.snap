@@ -29,6 +29,7 @@
             },
             [
                 "alive",
+                "alive/replogle_k562_lane4_test.alive_summary.json",
                 "alive/replogle_k562_lane4_test.h5ad",
                 "counts",
                 "counts/replogle_k562_lane4_test",
@@ -171,6 +172,7 @@
                 "reference/kb_index/t2g.txt"
             ],
             [
+                "replogle_k562_lane4_test.alive_summary.json:md5,4c12ab163da92e0241580f51669eb232",
                 "cells_x_genes.barcodes.txt:md5,5effecb6845365676a9fe1de41ae3067",
                 "cells_x_genes.genes.names.txt:md5,aedfdd7a240fda46350059cae1012b2a",
                 "cells_x_genes.genes.txt:md5,e6f8b480c750a55b773087559c738d34",
@@ -223,7 +225,7 @@
                 "guide_nnz": 290
             }
         ],
-        "timestamp": "2026-09-15T22:25:12.067832",
+        "timestamp": "2026-09-16T17:22:24.988237",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
