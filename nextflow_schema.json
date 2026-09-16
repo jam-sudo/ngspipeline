@@ -126,6 +126,12 @@
                     "default": false,
                     "description": "Keep multi/unassigned cells in the ALIVE h5ad with gene set to their status (inspection only). Default: exclude them (docs/decisions/006).",
                     "fa_icon": "fas fa-filter"
+                },
+                "pool_alive": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Also write alive/pooled.h5ad containing every sample (GEM group) of the samplesheet, obs index <barcode>-<sample_id>; needs more than one sample and one shared reference index (docs/decisions/011).",
+                    "fa_icon": "fas fa-layer-group"
                 }
             }
         },
