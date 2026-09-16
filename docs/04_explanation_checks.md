@@ -155,3 +155,11 @@ Numbering: `T-xx.n` = question n of the PR for task T-xx (PR bodies #1–#19).
 **T-42.2 96 %라는 수치의 정의.** 저자 표와 파이프라인 결과에 모두 있는 3,681 세포 중 파이프라인이 single로 부르고 벡터(`sgID_AB`)까지 같은 3,532 세포의 비율(threshold 방법, min_umi 5 / min_ratio 3의 T-16 실행). 파이프라인 single 중 일치율(99.3 %)이나 유전자 수준 일치율이 아니라 가장 보수적인 분모(공통 세포 전체)를 쓴 값이며, 기본값을 10/3으로 바꾼 뒤 재계산하지 않았다(009, T-13b.2).
 
 **T-42.3 "Upstream of ALIVE"와 "Feeds ALIVE"의 차이.** 전자는 ALIVE 로더가 h5ad를 수정 없이 읽는다는 T-14 증빙(스키마 검사, 로더 측 inspect)까지만 주장한다. 후자는 ALIVE에서 baseline이 실제로 돌았다는 F9를 뜻하는데, 한 GEM group은 벡터당 세포 중앙값 2로 `min_cells 64`에 못 미쳐 아직 실행되지 않았다. 그래서 현재 문구는 전자를 쓴다.
+
+## T-30 Discovery 실행 (PR #25)
+
+**T-30.1 로컬과 클러스터의 h5ad가 바이트 단위로 같은 이유.** 입력(FASTQ md5 24개 일치, index sha256 일치, 같은 guide 라이브러리와 파라미터), 같은 컨테이너 이미지(같은 SIF ↔ Docker 이미지 다이제스트), 난수·시각을 쓰지 않는 스크립트가 갖춰지면 실행기(local vs SLURM)와 컨테이너 엔진(Docker vs singularity-ce)은 계산에 관여하지 않는다. kb count의 peak RSS는 15.9 GB(맥) vs 35.7 GB(클러스터)로 달랐지만 이는 메모리 할당·스레드 동작의 차이일 뿐 출력에는 영향이 없었고, 그 사실 자체를 증빙에 적었다.
+
+**T-30.2 `short` 대신 `sharing` 파티션을 쓴 판단과 그 비용.** `sinfo`에서 short/express/debug의 131노드 중 125개가 drained/down이었고 앞선 대기 잡이 20개라 첫 시도는 20분 동안 시작조차 못 했다. `sharing`은 유휴 25노드가 있었지만 1시간 제한이 있어, `-c sharing.config`로 `resourceLimits.time`을 1 h로 낮춰 sbatch가 거부되지 않게 했다. 로컬 실행에서 가장 긴 프로세스가 21분이었으므로 제한 안에 들어온다는 근거가 있었고, 파라미터(`-params-file`)가 아니라 프로세스 지시자만 바꿨으므로 결과에는 영향이 없다.
+
+**T-30.3 FASTQ를 맥에서 올리지 않고 클러스터에서 ENA로 받은 이유와 검증.** 15.85 GB를 가정용 업링크로 올리는 것보다 클러스터의 회선으로 ENA에서 받는 편이 빠르고, 검증은 원래 다운로드 때 만든 `md5sums.txt`(ENA가 제공하는 md5)로 동일하게 할 수 있다. 24개 모두 OK였고, index는 클러스터에서 재빌드하면 결정성이 보장되지 않으므로 rsync로 옮긴 뒤 sha256으로 동일성을 확인했다.
