@@ -1,6 +1,6 @@
 # 006 — Non-single cells in the ALIVE h5ad
 
-Status: draft (agent-proposed; human sets accepted)
+Status: accepted (2026-09-15) — approved by the human in the Claude Code session of 2026-09-15
 Task: T-14
 
 ## Context
