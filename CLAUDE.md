@@ -14,15 +14,15 @@ Document roles — read in this order:
 
 ## Current state
 
-<!-- Human updates this block at session start. Agent reads only. Keep to pointers; details live in docs/progress.md. -->
+<!-- Kept by the agent since 2026-09-16 under the human's delegation. Keep to pointers; details live in docs/progress.md. -->
 
-- Active task: T-00
+- Active task: T-13b done; next T-40 (README completion) after human-executed T-03/T-05/T-30/T-31; Phase 5 needs learning debt cleared
 - Pipeline name: ngspipeline — docs/decisions/004-naming.md
-- Dev host: UNDECIDED — docs/decisions/003-dev-host.md
-- Dataset: UNDECIDED — docs/decisions/001-dataset.md
-- Quantifier: UNDECIDED — docs/decisions/002-quantifier.md
-- Last green CI: none
-- Open learning debt: none (docs/learning_debt.md)
+- Dev host: MacBook + colima (Rosetta; Apptainer in the VM for singularity) — docs/decisions/003-dev-host.md (accepted)
+- Dataset: Replogle 2022 K562 essential lane_4 — docs/decisions/001-dataset.md (accepted); chemistry 10XV3 confirmed
+- Quantifier: kallisto|bustools, prebuilt cDNA index for the full reference — docs/decisions/002-quantifier.md (accepted)
+- Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35049830245 (T-20, all 13 checks); dev now contains PRs #2–#18
+- Open learning debt: none recorded; 45 explanation-check questions (3 per PR #2–#16) await the human's answers before Phase 5 (docs/learning_debt.md)
 
 ## Rules
 

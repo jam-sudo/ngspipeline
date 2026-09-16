@@ -34,7 +34,7 @@ Rejected:
 
 Proposed: **Replogle 2022, K562 day-6 essential-scale, GEM group `lane_4`** (mRNA 8 runs + sgRNA 4 runs, 15.9 GB total).
 Published assignment source: `.obs` of `K562_essential_raw_singlecell_01.h5ad` (Figshare 20029387), filtered to this GEM group.
-`--chemistry`: 10x 3' v3 — stated in the paper methods (Chromium Single Cell 3' v3 with Feature Barcoding, CG000184 Rev C) and consistent with the measured 28-nt R1. Whitelist 3M-february-2018 (+ feature-barcode translation). NEEDS_HUMAN: confirm before T-11 wiring.
+`--chemistry`: 10x 3' v3 — stated in the paper methods (Chromium Single Cell 3' v3 with Feature Barcoding, CG000184 Rev C) and consistent with the measured 28-nt R1. Whitelist 3M-february-2018 (+ feature-barcode translation). Confirmed 2026-09-16 under the human's delegation: `--chemistry 10XV3` is the pipeline setting for this dataset (paper methods, measured 28-nt R1, feature-barcode translation verified on lane_4).
 
 ### Published assignment file (downloaded 2026-09-15)
 
