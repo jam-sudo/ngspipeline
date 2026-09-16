@@ -1,0 +1,2 @@
+sample_id,gex_r1,gex_r2,guide_r1,guide_r2,expected_cells
+replogle_k562_lane4_test,assets/test_data/gex_R1.fastq.gz,assets/test_data/gex_R2.fastq.gz,assets/test_data/guide_R1.fastq.gz,assets/test_data/guide_R2.fastq.gz,120
