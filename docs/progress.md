@@ -40,6 +40,7 @@ Update at the end of every session. `CLAUDE.md > Current state` holds pointers o
 | 2026-09-15 | T-22                              | in-progress                                                    | `nf-core pipelines schema build` OK (32 params), lint 0 failed, `--help` lists every parameter with a description — evidence in PR #11/#12 bodies                          | pending          |
 | 2026-09-15 | T-23                              | blocked                                                        | no Singularity/Apptainer on the MacBook (colima VM is arm64; Apptainer ships no arm64 package); WSL2 offline, Discovery account not requested → waiver candidate (PLAN §1) | —                |
 | 2026-09-15 | T-24                              | in-progress                                                    | README v1 — PR #12, human review pending                                                                                                                                   | pending (PR #12) |
+| 2026-09-15 | T-10                              | in-progress (DoD met, awaiting T-01/T-02 acceptance)           | 18 MB test data, sha256 identical on two regenerations, license in README — PR #4                                                                                          | pending (PR #4)  |
 
 ## Waivers
 
