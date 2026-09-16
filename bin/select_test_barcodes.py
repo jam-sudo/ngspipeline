@@ -72,10 +72,10 @@ def main():
     n_cand = len(bg)
     bg = [(b, c) for b, c in bg if b in fb_of]
     for b, c in bg[: a.n_background]:
-        chosen.append((b, "background", "", ""))
+        chosen.append((b, "background", "-", "-"))
     with open(a.out, "w", newline="") as o:
         w = csv.writer(o, delimiter="\t")
-        w.writerow(["barcode", "fb_barcode", "kind", "sgID_AB", "target_gene"])
+        w.writerow(["barcode", "fb_barcode", "kind", "sgID_AB", "target_gene"])  # "-" = not applicable (background)
         for b, kind, sg, g in chosen:
             w.writerow([b, fb_of[b], kind, sg, g])
     if a.gene_totals and a.genes_out:
