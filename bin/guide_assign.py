@@ -16,7 +16,7 @@ Methods
              single = exactly one vector; multi = two or more; unassigned = none.
 
 Output: assignment.tsv with cell_barcode, guide_id (vector), target_gene, method, top1_umi,
-top2_umi, ratio, posterior, status, plus top2_guide_id, n_assigned, total_guide_umi.
+top2_umi, ratio, posterior, status, plus top1_guide_id (top vector regardless of status), top2_guide_id, n_assigned, total_guide_umi.
 """
 import argparse, csv, math, sys
 import numpy as np
@@ -163,7 +163,7 @@ def main():
     with open(a.out, "w", newline="") as o:
         w = csv.writer(o, delimiter="\t", lineterminator="\n")
         w.writerow(["cell_barcode", "guide_id", "target_gene", "method", "top1_umi", "top2_umi", "ratio", "posterior", "status",
-                    "top2_guide_id", "n_assigned", "total_guide_umi"])
+                    "top1_guide_id", "top2_guide_id", "n_assigned", "total_guide_umi"])
         for i, b in enumerate(cells):
             row = M[i]
             order = np.argsort(-row, kind="stable")
@@ -196,7 +196,7 @@ def main():
             w.writerow([b, vectors[chosen] if chosen is not None else "", gene_of_vec.get(vectors[chosen], "") if chosen is not None else "",
                         a.method, int(t1), int(t2), ("inf" if ratio == math.inf else f"{ratio:.3f}"),
                         ("" if math.isnan(pst) else f"{pst:.4f}"), st,
-                        vectors[top2] if (top2 is not None and t2 > 0) else "", n_assigned, int(row.sum())])
+                        vectors[top1] if t1 > 0 else "", vectors[top2] if (top2 is not None and t2 > 0) else "", n_assigned, int(row.sum())])
     with open(a.summary, "w") as s:
         s.write(f"sample\t{a.sample}\nmethod\t{a.method}\ncells\t{len(cells)}\nvectors\t{len(vectors)}\n")
         for k, v in status_counts.items():
