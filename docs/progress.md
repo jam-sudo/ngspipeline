@@ -30,21 +30,21 @@ Update at the end of every session. `CLAUDE.md > Current state` holds pointers o
 
 ## Project DoD (PLAN.md §1)
 
-| #   | Condition                         | Status | Evidence |
-| --- | --------------------------------- | ------ | -------- |
-| F1  | lint errors 0                     | open   |          |
-| F2  | test,docker < 5 min               | open   |          |
-| F3  | test,singularity                  | open   |          |
-| F4  | nf-test all pass                  | open   |          |
-| F5  | CI green, last 10 commits         | open   |          |
-| F6  | -resume check doc                 | open   |          |
-| F7  | 3 profiles, identical h5ad hash   | open   |          |
-| F8  | guide assignment validation doc   | open   |          |
-| F9  | ALIVE loader reads h5ad unchanged | open   |          |
-| F10 | MultiQC guide section             | open   |          |
-| F11 | README complete                   | open   |          |
-| F12 | learning_debt.md empty            | open   |          |
-| F13 | all decisions accepted            | open   |          |
+| #   | Condition                         | Status                | Evidence                                                                                          |
+| --- | --------------------------------- | --------------------- | ------------------------------------------------------------------------------------------------- |
+| F1  | lint errors 0                     | open                  |                                                                                                   |
+| F2  | test,docker < 5 min               | open                  |                                                                                                   |
+| F3  | test,singularity                  | open                  |                                                                                                   |
+| F4  | nf-test all pass                  | open                  |                                                                                                   |
+| F5  | CI green, last 10 commits         | open                  |                                                                                                   |
+| F6  | -resume check doc                 | open                  |                                                                                                   |
+| F7  | 3 profiles, identical h5ad hash   | open                  |                                                                                                   |
+| F8  | guide assignment validation doc   | open                  |                                                                                                   |
+| F9  | ALIVE loader reads h5ad unchanged | open                  |                                                                                                   |
+| F10 | MultiQC guide section             | open                  |                                                                                                   |
+| F11 | README complete                   | open                  |                                                                                                   |
+| F12 | learning_debt.md empty            | open                  |                                                                                                   |
+| F13 | all decisions accepted            | done for 001–006, 008 | 001, 002, 003, 004, 005, 006, 008 `Status: accepted (2026-09-15)`; 007 not needed (no loader gap) |
 
 ## Waivers
 
