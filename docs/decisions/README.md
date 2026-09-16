@@ -3,7 +3,7 @@
 | #   | Topic                                     | Task | Status                                |
 | --- | ----------------------------------------- | ---- | ------------------------------------- |
 | 000 | template                                  | —    | —                                     |
-| 001 | Dataset                                   | T-01 | draft                                 |
+| 001 | Dataset                                   | T-01 | accepted (2026-09-15)                 |
 | 002 | GEX quantifier                            | T-02 | draft                                 |
 | 003 | Dev host                                  | T-02 | draft                                 |
 | 004 | Repo / pipeline naming                    | T-00 | accepted (2026-09-15) — `ngspipeline` |

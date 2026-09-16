@@ -1,6 +1,6 @@
 # 001 — Dataset selection
 
-Status: draft (agent-proposed choice; human sets accepted)
+Status: accepted (2026-09-15) — approved by the human in the Claude Code session of 2026-09-15
 Task: T-01
 
 ## Context
