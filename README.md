@@ -132,6 +132,7 @@ Per-process realtime and RSS for the local run are in the T-16 validation docume
 - Reproducibility checks: [`docs/02_resume_check.md`](docs/02_resume_check.md) (`-resume`), [`docs/03_cross_profile_hashes.md`](docs/03_cross_profile_hashes.md) (h5ad sha256 per profile).
 - Explanation-check questions from every PR, with reference answers: [`docs/04_explanation_checks.md`](docs/04_explanation_checks.md).
 - One-line summary with a claim → evidence table: [`docs/05_resume_line.md`](docs/05_resume_line.md).
+- SLURM (Discovery) runbook for the full-sample run: [`docs/06_discovery_runbook.md`](docs/06_discovery_runbook.md).
 - Validation against the authors' guide identities: [`docs/01_guide_assignment_validation.md`](docs/01_guide_assignment_validation.md).
 - Unit tests: `nf-test test .` (module tests under `modules/local/*/tests`, pipeline test in `tests/`).
 
