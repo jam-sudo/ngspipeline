@@ -16,7 +16,7 @@ Document roles — read in this order:
 
 <!-- Kept by the agent since 2026-09-16 under the human's delegation. Keep to pointers; details live in docs/progress.md. -->
 
-- Active task: T-40 agent part done (DoD re-verified on dev tip, docs/evidence/T-40_*); next T-42 (résumé line). v1.0 waits for human-executed T-03/T-05/T-30/T-31 and F9 — see docs/progress.md "Remaining for v1.0"
+- Active task: T-40 agent part done (DoD re-verified on dev tip, docs/evidence/T-40_*); T-42 done (docs/05). v1.0 waits for human-executed T-03/T-05/T-30/T-31 and F9 — see docs/progress.md "Remaining for v1.0"
 - Pipeline name: ngspipeline — docs/decisions/004-naming.md
 - Dev host: MacBook + colima (Rosetta; Apptainer in the VM for singularity) — docs/decisions/003-dev-host.md (accepted)
 - Dataset: Replogle 2022 K562 essential lane_4 — docs/decisions/001-dataset.md (accepted); chemistry 10XV3 confirmed

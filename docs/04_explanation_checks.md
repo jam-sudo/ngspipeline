@@ -147,3 +147,11 @@ Numbering: `T-xx.n` = question n of the PR for task T-xx (PR bodies #1–#19).
 **T-40.2 F5를 dev 커밋이 아니라 PR head 커밋으로 세는 이유.** nf-core 템플릿의 CI 워크플로는 `pull_request` 이벤트에서만 돌고, dev로의 병합 커밋에는 실행이 없다. 대신 브랜치 보호가 nf-core lint와 pre-commit 체크 통과를 병합 조건으로 강제하므로, dev의 모든 병합 커밋은 "녹색이었던 PR head"에 대응한다. 따라서 "최근 10커밋 CI 녹색"의 실체는 최근 10개 PR head 커밋의 실행 결과이며, docs-only PR은 nf-test가 paths-ignore로 건너뛰어 lint만 도는 점을 progress에 명시했다.
 
 **T-40.3 같은 테스트 데이터에서 Apptainer 실행이 도커보다 느린(155 s vs 93 s) 이유로 측정된 것과 추정인 것.** 측정된 것: 프로세스별 realtime에서 GUIDE_COUNT 46 s, KALLISTOBUSTOOLS_COUNT 40 s로 두 무거운 단계가 도커 실행보다 길고, 나머지 단계는 수 초 차이다. 추정(검증하지 않음): Apptainer는 amd64 SIF를 VM 안에서 Rosetta binfmt로 실행하고 도커는 colima의 Rosetta 통합 경로로 실행해 에뮬레이션 경로가 다르며, SIF 캐시가 있어도 실행 시 이미지 마운트·오버레이 준비 비용이 매 프로세스마다 든다. 이 차이는 결과 바이트에 영향이 없으므로 F3 판정과 무관하고, README 실행 통계에는 두 수치를 그대로 적었다.
+
+## T-42 이력서 문구 (PR #22)
+
+**T-42.1 "SLURM, AWS Batch에서 실행" 문구를 "설정됨"으로 완화하지 않고 삭제한 이유.** PLAN T-42의 규칙은 "증빙 없는 주장은 삭제"다. "설정됨"은 사실이지만 이력서에서는 실행 경험으로 읽히기 쉬워 과장 위험이 있고, 완화 표현을 허용하면 어디까지 완화할지의 판단이 매번 필요해진다. 대신 docs/05에 "삭제한 주장과 필요한 증빙" 표를 두어 F7/F9가 닫히면 원래 문구로 복원하도록 했다.
+
+**T-42.2 96 %라는 수치의 정의.** 저자 표와 파이프라인 결과에 모두 있는 3,681 세포 중 파이프라인이 single로 부르고 벡터(`sgID_AB`)까지 같은 3,532 세포의 비율(threshold 방법, min_umi 5 / min_ratio 3의 T-16 실행). 파이프라인 single 중 일치율(99.3 %)이나 유전자 수준 일치율이 아니라 가장 보수적인 분모(공통 세포 전체)를 쓴 값이며, 기본값을 10/3으로 바꾼 뒤 재계산하지 않았다(009, T-13b.2).
+
+**T-42.3 "Upstream of ALIVE"와 "Feeds ALIVE"의 차이.** 전자는 ALIVE 로더가 h5ad를 수정 없이 읽는다는 T-14 증빙(스키마 검사, 로더 측 inspect)까지만 주장한다. 후자는 ALIVE에서 baseline이 실제로 돌았다는 F9를 뜻하는데, 한 GEM group은 벡터당 세포 중앙값 2로 `min_cells 64`에 못 미쳐 아직 실행되지 않았다. 그래서 현재 문구는 전자를 쓴다.
