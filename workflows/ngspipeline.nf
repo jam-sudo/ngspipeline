@@ -9,6 +9,7 @@ include { GEX_QUANT              } from '../subworkflows/local/gex_quant/main'
 include { GUIDE_QUANT            } from '../subworkflows/local/guide_quant/main'
 include { GUIDE_ASSIGN           } from '../modules/local/guide_assign/main'
 include { TO_ALIVE_H5AD          } from '../modules/local/to_alive_h5ad/main'
+include { TO_ALIVE_H5AD as TO_ALIVE_H5AD_POOLED } from '../modules/local/to_alive_h5ad/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -34,6 +35,7 @@ workflow NGSPIPELINE {
     min_umi         // number: guide assignment minimum top-1 UMI
     min_ratio       // number: guide assignment minimum top-1/top-2 ratio
     keep_nonsingle  // boolean: keep multi/unassigned cells in the ALIVE h5ad (006)
+    pool_alive      // boolean: also write alive/pooled.h5ad with every sample (011)
     multiqc_config
     multiqc_logo
     multiqc_methods_description
@@ -87,7 +89,16 @@ workflow NGSPIPELINE {
     //
     // MODULE: ALIVE-ready h5ad (counts + assignment; docs/alive_schema.md, 006)
     //
-    TO_ALIVE_H5AD(GEX_QUANT.out.count_dir.join(GUIDE_ASSIGN.out.assignment), keep_nonsingle)
+    def ch_alive_in = GEX_QUANT.out.count_dir.join(GUIDE_ASSIGN.out.assignment)
+    TO_ALIVE_H5AD(ch_alive_in.map { meta, count_dir, assignment -> [ meta, [ meta.id ], count_dir, assignment ] }, keep_nonsingle)
+
+    // Pooled h5ad across samples (GEM groups) for ALIVE (docs/decisions/011): obs index <barcode>-<sample_id>
+    def ch_pooled = pool_alive
+        ? ch_alive_in.toSortedList { a, b -> a[0].id <=> b[0].id }
+            .filter { it.size() > 1 }
+            .map { rows -> [ [ id: 'pooled' ], rows.collect { it[0].id }, rows.collect { it[1] }, rows.collect { it[2] } ] }
+        : channel.empty()
+    TO_ALIVE_H5AD_POOLED(ch_pooled, keep_nonsingle)
 
     //
     // MultiQC custom content: quantifier statistics (kb count run_info.json / inspect.json + matrix dimensions)
@@ -159,6 +170,7 @@ workflow NGSPIPELINE {
     guide_stats    = GUIDE_QUANT.out.stats      // channel: [ meta, map ]
     assignment     = GUIDE_ASSIGN.out.assignment // channel: [ meta, assignment.tsv ]
     alive_h5ad     = TO_ALIVE_H5AD.out.h5ad     // channel: [ meta, <sample>.h5ad ]
+    alive_pooled   = TO_ALIVE_H5AD_POOLED.out.h5ad // channel: [ meta, pooled.h5ad ] (only with --pool_alive and > 1 sample)
     versions       = ch_versions                // channel: [ path(versions.yml) ]
 }
 
