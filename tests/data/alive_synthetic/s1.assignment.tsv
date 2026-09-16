@@ -1,0 +1,4 @@
+cell_barcode	guide_id	target_gene	method	top1_umi	top2_umi	ratio	posterior	status	top1_guide_id	top2_guide_id	n_assigned	total_guide_umi
+c1	V_A	GENEA	threshold	20	2	10.0		single	V_A	V_B	1	22
+c2	V_NT	non-targeting	threshold	15	0	inf		single	V_NT		1	15
+c3			threshold	12	11	1.09		multi	V_A	V_B	2	23

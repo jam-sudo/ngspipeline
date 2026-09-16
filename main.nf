@@ -47,6 +47,7 @@ workflow JAMSUDO_NGSPIPELINE {
         params.min_umi,
         params.min_ratio,
         params.keep_nonsingle,
+        params.pool_alive,
         params.multiqc_config,
         params.multiqc_logo,
         params.multiqc_methods_description,

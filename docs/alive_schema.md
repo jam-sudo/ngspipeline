@@ -28,6 +28,10 @@ Consumer: ALIVE `src/alive/data/replogle.py` (`build_index`, `ad.read_h5ad(..., 
 | `top1_umi`, `top2_umi`, `total_guide_umi` | int32   | guide UMI evidence from `assignment.tsv`                                                                                                           | no                                |
 | `sample_id`                               | str     | samplesheet `sample_id`                                                                                                                            | no                                |
 
+## Pooled h5ad (`--pool_alive`, decision 011)
+
+`alive/pooled.h5ad` concatenates every sample of the samplesheet (same reference index required). obs columns are identical; the obs index becomes `<cell_barcode>-<sample_id>` because 10x barcodes repeat across GEM groups. `uns['alive_schema']['obs_index']`, `uns['assignment']['per_sample']` and `uns['provenance']['samples']` describe the composition. Single-sample files are byte-for-byte unchanged by this feature. Each h5ad has a `<id>.alive_summary.json` sidecar (cells, genes, labels, status counts, first obs ids).
+
 ## var
 
 Index = Ensembl gene id **with version** exactly as kb writes it in `t2g.txt` / `cells_x_genes.genes.txt` (e.g. `ENSG00000008988.13`); columns `gene_id` (same), `gene_name` (symbol from `cells_x_genes.genes.names.txt`). ALIVE does not pin a versioning convention; if a downstream step needs unversioned ids, strip the suffix there.
