@@ -1,0 +1,6 @@
+cell	threshold_status	threshold_guide	mixture_status	mixture_guide
+E1_single	single	V1	single	V1
+E2_multi	multi	V1	multi	V1
+E3_borderline	single	V1	single	V1
+E4_zero	unassigned	-	unassigned	-
+E5_tie	multi	V1	multi	V1
