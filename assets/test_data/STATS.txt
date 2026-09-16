@@ -1,0 +1,4 @@
+gex reads in=235218732 out=203728; cells with reads=120/120
+guide reads in=19749653 out=57982; cells with guide reads=120/120
+mini genome genes=200 flank=500; library vectors=54
+params gex_frac=0.05 bg_frac=0.02 guide_frac=0.1
