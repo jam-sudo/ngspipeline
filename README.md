@@ -68,7 +68,7 @@ sampleA,run2_gex_R1.fastq.gz,run2_gex_R2.fastq.gz,,,3681
 
 Reference: `--fasta` + `--gtf` (the pipeline builds the kb index) or `--reference_index <dir>` containing `*.idx` and `t2g.txt` (see `bin/build_reference_index.sh` and [002](docs/decisions/002-quantifier.md) for why a prebuilt index is used for the full human reference on small machines).
 
-`--chemistry` (`10XV2` | `10XV3`) selects the 10x whitelist and read layout and must be set from the dataset's protocol ([001](docs/decisions/001-dataset.md)). `--min_umi` and `--min_ratio` have no defaults; pass them with `-params-file` (see the note below).
+`--chemistry` (`10XV2` | `10XV3`) selects the 10x whitelist and read layout and must be set from the dataset's protocol ([001](docs/decisions/001-dataset.md)). `--min_umi` (default 10) and `--min_ratio` (default 3) come from [009](docs/decisions/009-assignment-thresholds.md); override them with `-params-file` (see the note below).
 
 ### Run
 
@@ -80,11 +80,11 @@ nextflow run jam-sudo/ngspipeline -profile <docker/singularity/...>,local \
    --outdir <OUTDIR>
 ```
 
-`assign_params.yml`:
+`assign_params.yml` (only needed to override the defaults):
 
 ```yaml
 assign_method: threshold
-min_umi: 5
+min_umi: 10
 min_ratio: 3
 ```
 
