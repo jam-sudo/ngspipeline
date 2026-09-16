@@ -16,3 +16,9 @@ counts/*/inspect.json
 counts/*/*.bus
 counts/*/10x_version3_whitelist.txt
 reference/kb_index/*.idx
+guides/*/kb_info.json
+guides/*/run_info.json
+guides/*/inspect.json
+guides/*/*.bus
+guides/*/guide_counts.h5ad
+reference/guide_index/kite.idx

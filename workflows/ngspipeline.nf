@@ -6,6 +6,7 @@
 include { FASTQC                 } from '../modules/nf-core/fastqc/main'
 include { MULTIQC                } from '../modules/nf-core/multiqc/main'
 include { GEX_QUANT              } from '../subworkflows/local/gex_quant/main'
+include { GUIDE_QUANT            } from '../subworkflows/local/guide_quant/main'
 include { paramsSummaryMap       } from 'plugin/nf-schema'
 include { paramsSummaryMultiqc   } from '../subworkflows/nf-core/utils_nfcore_pipeline'
 include { softwareVersionsToYAML } from '../subworkflows/nf-core/utils_nfcore_pipeline'
@@ -21,6 +22,7 @@ workflow NGSPIPELINE {
 
     take:
     ch_samplesheet  // channel: [ meta, [gex_r1, gex_r2], [guide_r1, guide_r2] ] from --input
+    guides          // string: guide library CSV
     fasta           // string: genome FASTA (with gtf, builds the kb index) or null
     gtf             // string: annotation GTF or null
     reference_index // string: prebuilt kb index directory or null
@@ -55,6 +57,12 @@ workflow NGSPIPELINE {
     def ch_gtf   = gtf   ? channel.value([ [ id: file(gtf).baseName ],   file(gtf,   checkIfExists: true) ]) : channel.empty()
     GEX_QUANT(ch_gex, ch_fasta, ch_gtf, reference_index, chemistry, kb_workflow)
     ch_versions = ch_versions.mix(GEX_QUANT.out.versions)
+
+    //
+    // SUBWORKFLOW: guide (sgRNA) quantification (kite)
+    //
+    GUIDE_QUANT(ch_guide, guides, chemistry, GEX_QUANT.out.dims, GEX_QUANT.out.count_dir)
+    ch_versions = ch_versions.mix(GUIDE_QUANT.out.versions)
 
     //
     // Collate and save software versions
@@ -114,6 +122,8 @@ workflow NGSPIPELINE {
     emit:multiqc_report = MULTIQC.out.report.map { _meta, report -> [report] }.toList() // channel: /path/to/multiqc_report.html
     gex_counts     = GEX_QUANT.out.count_dir    // channel: [ meta, path(<id>.count) ]
     gex_dims       = GEX_QUANT.out.dims         // channel: [ meta, [cells, genes, nnz, matrix] ]
+    guide_h5ad     = GUIDE_QUANT.out.h5ad       // channel: [ meta, guide_counts.h5ad ]
+    guide_stats    = GUIDE_QUANT.out.stats      // channel: [ meta, map ]
     versions       = ch_versions                // channel: [ path(versions.yml) ]
 }
 
