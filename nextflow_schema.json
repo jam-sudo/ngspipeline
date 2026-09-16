@@ -110,14 +110,16 @@
                 "min_umi": {
                     "type": "number",
                     "minimum": 0,
-                    "description": "Minimum top-1 vector UMI count for a cell to be assigned (threshold method; fallback for unfittable vectors in mixture). No default: set from the dataset (PLAN.md T-13).",
-                    "fa_icon": "fas fa-sort-numeric-up"
+                    "description": "Minimum top-1 vector UMI count for a cell to be assigned (threshold method; fallback for unfittable vectors in mixture). Default 10 = above the 99th percentile of the top-1 vector UMI in empty droplets of the reference sample (docs/decisions/009).",
+                    "fa_icon": "fas fa-sort-numeric-up",
+                    "default": 10
                 },
                 "min_ratio": {
                     "type": "number",
                     "minimum": 1,
-                    "description": "Minimum top-1 / top-2 UMI ratio for a single assignment (threshold method). No default: set from the dataset.",
-                    "fa_icon": "fas fa-divide"
+                    "description": "Minimum top-1 / top-2 UMI ratio for a single assignment (threshold method). Default 3 (docs/decisions/009).",
+                    "fa_icon": "fas fa-divide",
+                    "default": 3
                 },
                 "keep_nonsingle": {
                     "type": "boolean",
@@ -125,8 +127,7 @@
                     "description": "Keep multi/unassigned cells in the ALIVE h5ad with gene set to their status (inspection only). Default: exclude them (docs/decisions/006).",
                     "fa_icon": "fas fa-filter"
                 }
-            },
-            "required": ["min_umi", "min_ratio"]
+            }
         },
         "cluster_cloud_options": {
             "title": "Cluster / cloud execution options",
