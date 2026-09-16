@@ -1,0 +1,46 @@
+# T-30 — nextflow run . -profile test,slurm,singularity on Discovery (login-00 head process, sharing partition, singularity-ce 3.10.3, Nextflow 26.04.6, OpenJDK 19.0.1) — dev tip f95e30a, 2026-09-16
+
+Command: `nextflow run . -profile test,slurm,singularity -c sharing.config --slurm_partition sharing --slurm_account neu --outdir /scratch/yoon.jaem/runs/test` (sharing.config: `process { resourceLimits = [cpus: 28, memory: "180.GB", time: "1.h"] }` because the sharing partition has a 1 h limit)
+
+```
+[4b/bca494] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[1e/403a9c] JAM…INDEX (guide_library_test) | 1 of 1 ✔
+[c6/806ba4] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[97/c3541a] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[99/229a42] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[9d/4df253] JAM…LINE:MULTIQC (ngspipeline) | 1 of 1 ✔
+-[jam-sudo/ngspipeline] Pipeline completed successfully-
+executor >  slurm (9)
+[ea/cd0d7c] JAM…gle_k562_lane4_test_guide) | 2 of 2 ✔
+[20/9d3ea4] JAM…TOOLS_REF (mini_genome.fa) | 1 of 1 ✔
+[4b/bca494] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[1e/403a9c] JAM…INDEX (guide_library_test) | 1 of 1 ✔
+[c6/806ba4] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[97/c3541a] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[99/229a42] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[9d/4df253] JAM…LINE:MULTIQC (ngspipeline) | 1 of 1 ✔
+-[jam-sudo/ngspipeline] Pipeline completed successfully-
+Completed at: 16-Sep-2026 14:14:07
+Duration    : 9m 55s
+CPU hours   : 0.2
+Succeeded   : 9
+EXIT 0 wall_seconds 802
+```
+
+Per-process trace (name, status, realtime, peak_rss):
+```
+name	status	realtime	peak_rss
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:FASTQC (replogle_k562_lane4_test_gex)	COMPLETED	4s	483.1 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:FASTQC (replogle_k562_lane4_test_guide)	COMPLETED	2s	211.6 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_QUANT:GUIDE_INDEX (guide_library_test)	COMPLETED	8s	174.1 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GEX_QUANT:KALLISTOBUSTOOLS_REF (mini_genome.fa)	COMPLETED	15s	211 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_QUANT:GUIDE_COUNT (replogle_k562_lane4_test)	COMPLETED	57s	8.4 GB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GEX_QUANT:KALLISTOBUSTOOLS_COUNT (replogle_k562_lane4_test)	COMPLETED	1m 22s	35.4 GB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_ASSIGN (replogle_k562_lane4_test)	COMPLETED	1s	4.9 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:TO_ALIVE_H5AD (replogle_k562_lane4_test)	COMPLETED	2s	53.9 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:MULTIQC (ngspipeline)	COMPLETED	1m 13s	567.7 MB
+```
+
+h5ad sha256: a801cc23a85d20c3e5122f88da84dbf1dcc9886a6a44cd0330cdd6fd10816427 (identical to the MacBook docker and Apptainer runs, docs/03)
+
+Cluster state at run time (`sinfo`): short/express/debug partitions had 125 of 131 nodes drained or down and 20 pending jobs ahead, so the first attempt on `short` never started in 20 min and was cancelled; `sharing` (25 idle nodes, 28+ cores / 186 GB, 1 h limit) ran the jobs immediately. Wall 802 s including queue wait and SIF pulls.

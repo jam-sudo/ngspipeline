@@ -1,5 +1,14 @@
 # 06 — T-30 runbook: full lane_4 run on Discovery (`-profile slurm,singularity`)
 
+**Executed 2026-09-16** (evidence `docs/evidence/T-30_lane4_slurm.txt`). Facts read from the cluster that day, replacing the NEEDS_HUMAN placeholders below: partitions `short` (default, 2 d), `express`/`sharing` (1 h), `debug` (20 min); account `neu`, QOS `normal`; modules `OpenJDK/19.0.1`, `singularity/3.10.3` (no apptainer; the `nextflow` modules stop at 24.04.4, so Nextflow 26.04.6 was installed in `~/bin`); scratch `/scratch/<user>`; transfer host `xfer.discovery.neu.edu`, login `login-00.discovery.neu.edu`. On that day 125 of 131 `short` nodes were drained or down, so the run used `sharing` with a 1 h cap:
+
+```groovy
+// sharing.config, passed with -c
+process { resourceLimits = [ cpus: 28, memory: "180.GB", time: "1.h" ] }
+```
+
+Every process of the full run stays under 22 min, so the 1 h limit is safe. FASTQ were downloaded on the cluster from ENA (`manifest.tsv` URLs, `md5sum -c md5sums.txt`) instead of being uploaded from the laptop.
+
 Human-executed (CLAUDE.md rule 9 applies to AWS; Discovery is free but still the human's account). Goal: the same h5ad sha256 as the local run in `docs/03_cross_profile_hashes.md`, which requires the **same parameters as T-16**: `assign_params.yml` with `min_umi: 5`, `min_ratio: 3`, `assign_method: threshold`, `--chemistry 10XV3`, the same prebuilt index and guide library.
 
 Values marked NEEDS_HUMAN are cluster facts the agent must not guess (CLAUDE.md rule 1); read them from the cluster with the commands shown.
@@ -26,7 +35,7 @@ sed 's#/Users/jam/ngs_data/replogle_k562_essential_lane4#/scratch/<user>/ngs/fas
 rsync -avP /tmp/samplesheet_lane4_discovery.csv $D/
 ```
 
-On the cluster: `cd /scratch/<user>/ngs/fastq && md5sum -c md5sums.txt` (24 files OK).
+On the cluster: `cd /scratch/<user>/ngs/fastq && md5sum -c md5sums.txt` (24 files OK). Faster alternative used in practice: `cut -f1 ../manifest.tsv | xargs -P 4 -n 1 wget -q -c` on the login node (ENA, ~15 GB in about 12 min), then the same md5 check.
 
 ## 2. Nextflow + pipeline on the cluster
 
