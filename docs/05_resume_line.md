@@ -25,4 +25,4 @@ Rule (PLAN.md T-42): every claim maps to F1–F13 evidence in `docs/progress.md`
 | "… and AWS Batch"            | T-31 (AWS Batch, human, ≤ $100) → third F7 hash                      |
 | "feeds ALIVE" (baseline run) | F9: baseline on an h5ad with enough GEM groups, commit link in ALIVE |
 
-When T-31 and F9 close, restore the PLAN.md wording: "executed reproducibly on local, SLURM, and AWS Batch … Feeds ALIVE".
+When F9 closes, restore "Feeds ALIVE". The AWS Batch claim stays out (010).

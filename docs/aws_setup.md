@@ -1,3 +1,5 @@
+> **Not executed.** AWS Batch execution was waived on 2026-09-16 (docs/decisions/010-aws-waiver.md). This document and `conf/awsbatch.config` are configuration-only deliverables and have not been tested against a real AWS account.
+
 # AWS Batch setup (T-31) — configuration only; the human creates the resources and launches runs
 
 Budget guard: PLAN.md caps the whole exercise at **$100**; billing alarms at $50/$100 are a T-03 deliverable (`docs/aws_budget.png`). CLAUDE.md rule 9: the agent never runs anything that costs money.

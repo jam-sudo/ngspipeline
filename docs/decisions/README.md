@@ -12,5 +12,6 @@
 | 007 | ALIVE loader gap (only if it occurs)                           | T-14  | not started                           |
 | 008 | Test-profile data design (UMI-family subsampling, mini genome) | T-10  | accepted (2026-09-15)                 |
 | 009 | Guide-assignment thresholds (min_umi 10, min_ratio 3)          | T-13b | accepted (2026-09-16, delegated)      |
+| 010 | AWS Batch execution waived (human decision)                    | T-31  | accepted (2026-09-16)                 |
 
 Rule: a choice that is not in a record here does not exist. Agent drafts; human sets `Status: accepted (date)`. Since 2026-09-16 the human has delegated decision authority to the agent ("claude.md 및 기타 결정사항들 결정 권한 위임 승인"); records decided under that delegation say so in their Status line.
