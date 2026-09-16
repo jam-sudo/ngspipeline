@@ -65,4 +65,4 @@ docs/01_guide_assignment_validation.md   docs/02_resume_check.md   docs/03_cross
 
 ## Decision records
 
-`docs/decisions/NNN-[[ORCA_RICH_MD:45fc83cd7aa3a8160d8f242cb8501a99:inline-html:%3Ctopic%3E]].md` — Context / Options / Choice / Consequences. Agent drafts, human approves by adding `Status: accepted` and a date.
+`docs/decisions/NNN-<topic>.md` — Context / Options / Choice / Consequences. Agent drafts, human approves by adding `Status: accepted` and a date.

@@ -1,6 +1,6 @@
 // Test harness: GUIDE_INDEX + GUIDE_COUNT on the synthetic guide reads (tests/data/guide_synthetic)
-include { GUIDE_INDEX } from '../../modules/local/guide_index/main'
-include { GUIDE_COUNT } from '../../modules/local/guide_count/main'
+include { GUIDE_INDEX } from '../../guide_index/main'
+include { GUIDE_COUNT } from '../main'
 
 workflow GUIDE_SYNTHETIC {
     take:

@@ -4,16 +4,16 @@ Source: Replogle et al. 2022 (Cell; PMC9380471), K562 day-6 essential-scale Pert
 
 ## Files
 
-| File                                              | What                                                                                                                                                     |
-| ------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `selected_barcodes.tsv`                           | 120 authors-called cells (24 vectors × 4 + 24 non-targeting) with their feature-barcode variant and `sgID_AB` ground truth, plus 300 background barcodes |
-| `selected_genes.tsv`                              | 200 most-expressed genes in gem_group 4 (mini-genome contigs)                                                                                            |
-| `runs_lane4.tsv`                                  | SRA runs, library type, md5                                                                                                                              |
-| `gex_R1/R2.fastq.gz`                              | GEX reads of selected barcodes, UMI-family subsampled (cells 5%, background 100%)                                                                        |
-| `guide_R1/R2.fastq.gz`                            | sgRNA-library reads of selected barcodes (feature-barcode variant), UMI-family subsampled (20%)                                                          |
-| `ref/mini_genome.fa.gz`, `ref/mini_genome.gtf.gz` | one contig per selected gene (locus ± 500 bp), GTF in contig coordinates                                                                                 |
-| `../guide_library_test.csv`                       | `guide_id,target_gene,protospacer,vector_id` for the vectors present in the cells + 6 absent vectors                                                     |
-| `SHA256SUMS`, `STATS.txt`                         | regeneration check and extraction statistics                                                                                                             |
+| File                                              | What                                                                                                                                                                                     |
+| ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `selected_barcodes.tsv`                           | 120 authors-called cells (24 vectors × 4 + 24 non-targeting) with their feature-barcode variant and `sgID_AB` ground truth, plus 300 background barcodes (`sgID_AB`/`target_gene` = `-`) |
+| `selected_genes.tsv`                              | 200 most-expressed genes in gem_group 4 (mini-genome contigs)                                                                                                                            |
+| `runs_lane4.tsv`                                  | SRA runs, library type, md5                                                                                                                                                              |
+| `gex_R1/R2.fastq.gz`                              | GEX reads of selected barcodes, UMI-family subsampled (cells 5%, background 100%)                                                                                                        |
+| `guide_R1/R2.fastq.gz`                            | sgRNA-library reads of selected barcodes (feature-barcode variant), UMI-family subsampled (20%)                                                                                          |
+| `ref/mini_genome.fa.gz`, `ref/mini_genome.gtf.gz` | one contig per selected gene (locus ± 500 bp), GTF in contig coordinates                                                                                                                 |
+| `../guide_library_test.csv`                       | `guide_id,target_gene,protospacer,vector_id` for the vectors present in the cells + 6 absent vectors                                                                                     |
+| `SHA256SUMS`, `STATS.txt`                         | regeneration check and extraction statistics                                                                                                                                             |
 
 ## Regenerate
 

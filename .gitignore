@@ -11,3 +11,5 @@ null/
 .nf-test.log
 .nf-test/
 .playwright-mcp/
+!tests/data/
+!tests/data/**
