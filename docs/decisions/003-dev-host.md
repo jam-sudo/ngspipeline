@@ -21,6 +21,8 @@ Measured on 2026-09-15 (T-00/T-02):
 
 Colima notes: VM memory was raised from 12 GB to 20 GB for the index-build measurements (002); for day-to-day development 8 CPU / 14 GB leaves room for macOS on a 24 GB machine. Only `$HOME` and `/tmp/colima` are mounted in the VM, so the Nextflow work dir must live under `$HOME` (a run with work dir under `/private/tmp` failed with `.command.run: No such file or directory`). `~/NGSpipeline/work` is gitignored and used.
 
+Addendum 2026-09-15 (T-23): Apptainer 1.5.3 (apptainer PPA, arm64), OpenJDK 21 and Nextflow 26.04.6 were installed _inside_ the colima VM (`colima ssh`, `~/bin/nextflow`); `-profile test,singularity` runs there in 2 min 31 s with amd64 SIF images executed through the Rosetta binfmt handler. This is the Singularity location for F3 on this host. The VM was found stopped once during the day; `colima status` is part of the session start.
+
 ## Options
 
 1. MacBook only (colima, Rosetta amd64 emulation).
