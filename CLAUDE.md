@@ -22,7 +22,7 @@ Document roles — read in this order:
 - Dataset: Replogle 2022 K562 essential lane_4 — docs/decisions/001-dataset.md (accepted); chemistry 10XV3 confirmed
 - Quantifier: kallisto|bustools, prebuilt cDNA index for the full reference — docs/decisions/002-quantifier.md (accepted)
 - Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35049830245 (T-20, all 13 checks); dev now contains PRs #2–#18
-- Open learning debt: none recorded; 45 explanation-check questions (3 per PR #2–#16) await the human's answers before Phase 5 (docs/learning_debt.md)
+- Open learning debt: none recorded; reference answers to the 48 explanation-check questions are in docs/04_explanation_checks.md (written by the agent under delegation, 2026-09-16)
 
 ## Rules
 
