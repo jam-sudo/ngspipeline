@@ -128,6 +128,33 @@
             },
             "required": ["min_umi", "min_ratio"]
         },
+        "cluster_cloud_options": {
+            "title": "Cluster / cloud execution options",
+            "type": "object",
+            "fa_icon": "fas fa-server",
+            "description": "Only used with -profile slurm (T-30) or awsbatch (T-31). Set by the human per site; nothing here has a default.",
+            "properties": {
+                "slurm_partition": {
+                    "type": "string",
+                    "description": "SLURM partition (queue) for -profile slurm. Required with that profile.",
+                    "fa_icon": "fas fa-server",
+                    "hidden": true
+                },
+                "slurm_account": {
+                    "type": "string",
+                    "description": "SLURM --account, if the site requires one.",
+                    "fa_icon": "fas fa-user",
+                    "hidden": true
+                },
+                "slurm_extra": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Extra sbatch options appended to every job.",
+                    "fa_icon": "fas fa-cog",
+                    "hidden": true
+                }
+            }
+        },
         "institutional_config_options": {
             "title": "Institutional config options",
             "type": "object",
@@ -274,6 +301,9 @@
         },
         {
             "$ref": "#/$defs/guide_assignment_options"
+        },
+        {
+            "$ref": "#/$defs/cluster_cloud_options"
         },
         {
             "$ref": "#/$defs/institutional_config_options"
