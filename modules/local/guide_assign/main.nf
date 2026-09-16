@@ -19,6 +19,7 @@ process GUIDE_ASSIGN {
     output:
     tuple val(meta), path("${prefix}.assignment.tsv")        , emit: assignment
     tuple val(meta), path("${prefix}.assignment_summary.tsv"), emit: summary
+    tuple val(meta), path("${prefix}_guide_assignment*_mqc.tsv")  , emit: mqc
     tuple val("${task.process}"), val('python'), eval("python3 --version | sed 's/Python //'"), emit: versions_python, topic: versions
 
     when:
@@ -42,12 +43,13 @@ process GUIDE_ASSIGN {
         --sample ${meta.id} \\
         $args \\
         --out ${prefix}.assignment.tsv \\
-        --summary ${prefix}.assignment_summary.tsv
+        --summary ${prefix}.assignment_summary.tsv \\
+        --mqc ${prefix}_guide_assignment_mqc.tsv
     """
 
     stub:
     prefix = task.ext.prefix ?: "${meta.id}"
     """
-    touch ${prefix}.assignment.tsv ${prefix}.assignment_summary.tsv
+    touch ${prefix}.assignment.tsv ${prefix}.assignment_summary.tsv ${prefix}_guide_assignment_mqc.tsv ${prefix}_guide_assignment_generalstats_mqc.tsv
     """
 }

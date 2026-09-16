@@ -80,7 +80,15 @@ workflow NGSPIPELINE {
         .join(GUIDE_QUANT.out.features)
         .join(ch_gex_cells)
     GUIDE_ASSIGN(ch_assign_in, GUIDE_QUANT.out.feature_map, file(guides, checkIfExists: true), assign_method, min_umi, min_ratio)
-    ch_multiqc_files = ch_multiqc_files.mix(GUIDE_ASSIGN.out.summary.map { _meta, f -> f })
+    ch_multiqc_files = ch_multiqc_files.mix(GUIDE_ASSIGN.out.mqc.map { _meta, f -> f }.flatten())
+
+    //
+    // MultiQC custom content: quantifier statistics (kb count run_info.json / inspect.json + matrix dimensions)
+    //
+    def ch_kb_mqc = GEX_QUANT.out.count_dir.join(GEX_QUANT.out.dims).join(GUIDE_QUANT.out.count_dir).join(GUIDE_QUANT.out.stats)
+        .map { meta, gex_dir, dims, guide_dir, gstats -> kbQuantMqc(meta, gex_dir, dims, guide_dir, gstats) }
+        .collectFile(name: 'kb_quant_mqc.tsv', keepHeader: true, skip: kbQuantMqcHeaderLines(), newLine: false)
+    ch_multiqc_files = ch_multiqc_files.mix(ch_kb_mqc)
 
     //
     // Collate and save software versions
@@ -144,6 +152,49 @@ workflow NGSPIPELINE {
     guide_stats    = GUIDE_QUANT.out.stats      // channel: [ meta, map ]
     assignment     = GUIDE_ASSIGN.out.assignment // channel: [ meta, assignment.tsv ]
     versions       = ch_versions                // channel: [ path(versions.yml) ]
+}
+
+/*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    FUNCTIONS
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+*/
+
+def kbQuantMqcHeader() {
+    return [
+        "# id: 'kb_quant'",
+        "# section_name: 'Quantification (kallisto|bustools)'",
+        "# description: 'kb count statistics for the gene-expression (GEX) and guide (sgRNA) libraries: reads processed, pseudoalignment rate, barcodes on the whitelist, and the resulting matrix dimensions (GEX after the bustools cell filter).'",
+        "# plot_type: 'table'",
+        "# pconfig:",
+        "#     id: 'kb_quant_table'",
+        "#     title: 'Quantification statistics'",
+        "# headers:",
+        "#     gex_reads: { title: 'GEX reads', format: '{:,.0f}' }",
+        "#     gex_pseudoaligned_pct: { title: 'GEX pseudoaligned %', suffix: '%', min: 0, max: 100, format: '{:,.1f}' }",
+        "#     gex_reads_on_whitelist_pct: { title: 'GEX reads on-list %', suffix: '%', min: 0, max: 100, format: '{:,.1f}' }",
+        "#     gex_cells: { title: 'GEX cells (filtered)', format: '{:,.0f}' }",
+        "#     gex_genes: { title: 'Genes', format: '{:,.0f}' }",
+        "#     gex_median_umis_per_barcode: { title: 'GEX median UMIs/barcode', format: '{:,.0f}' }",
+        "#     guide_reads: { title: 'Guide reads', format: '{:,.0f}' }",
+        "#     guide_pseudoaligned_pct: { title: 'Guide pseudoaligned %', suffix: '%', min: 0, max: 100, format: '{:,.1f}' }",
+        "#     guide_barcodes: { title: 'Guide barcodes', format: '{:,.0f}' }",
+        "#     guide_features: { title: 'Guide features', format: '{:,.0f}' }",
+        "#     guide_cells_with_reads: { title: 'GEX cells with guide reads', format: '{:,.0f}' }",
+        "Sample\tgex_reads\tgex_pseudoaligned_pct\tgex_reads_on_whitelist_pct\tgex_cells\tgex_genes\tgex_median_umis_per_barcode\tguide_reads\tguide_pseudoaligned_pct\tguide_barcodes\tguide_features\tguide_cells_with_reads",
+    ]
+}
+
+def kbQuantMqcHeaderLines() { return kbQuantMqcHeader().size() }
+
+def kbQuantMqc(meta, gex_dir, dims, guide_dir, gstats) {
+    def slurper = new groovy.json.JsonSlurper()
+    def gri = slurper.parse(file("${gex_dir}/run_info.json"))
+    def gin = slurper.parse(file("${gex_dir}/inspect.json"))
+    def uri = slurper.parse(file("${guide_dir}/run_info.json"))
+    def row = [ meta.id, gri.n_processed, gri.p_pseudoaligned, gin.percentageReadsOnOnlist, dims.cells, dims.genes, gin.medianUMIsPerBarcode,
+                uri.n_processed, uri.p_pseudoaligned, gstats.barcodes, gstats.features, gstats.cells_with_guides ]
+    return (kbQuantMqcHeader() + [ row.join('\t') ]).join('\n') + '\n'
 }
 
 /*
