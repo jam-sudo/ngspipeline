@@ -22,3 +22,4 @@ guides/*/inspect.json
 guides/*/*.bus
 guides/*/guide_counts.h5ad
 reference/guide_index/kite.idx
+alive/*.h5ad
