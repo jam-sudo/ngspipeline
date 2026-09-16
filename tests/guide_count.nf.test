@@ -1,0 +1,48 @@
+nextflow_workflow {
+
+    name "GUIDE_INDEX + GUIDE_COUNT on synthetic reads (T-12 DoD)"
+    script "tests/workflows/guide_synthetic.nf"
+    workflow "GUIDE_SYNTHETIC"
+    tag "guide"
+
+    test("kite:10xFB counts exactly the designed UMIs") {
+
+        when {
+            params {
+                outdir = "$outputDir"
+            }
+            workflow {
+                """
+                input[0] = file("${projectDir}/tests/data/guide_synthetic/synth_guide_library.csv")
+                input[1] = file("${projectDir}/tests/data/guide_synthetic/synth_guide_R1.fastq.gz")
+                input[2] = file("${projectDir}/tests/data/guide_synthetic/synth_guide_R2.fastq.gz")
+                input[3] = '10XV3'
+                input[4] = 'kite:10xFB'
+                """
+            }
+        }
+
+        then {
+            assert workflow.success
+            def bcs   = path(workflow.out.barcodes[0][1]).readLines().collect { it.trim() }
+            def feats = path(workflow.out.features[0][1]).readLines().collect { it.trim() }
+            def lines = path(workflow.out.matrix[0][1]).readLines().findAll { !it.startsWith('%') }
+            def (nb, nf, nnz) = lines[0].trim().split(/\s+/).collect { it as int }
+            def counts = [:]
+            lines[1..-1].each { l ->
+                def (i, j, v) = l.trim().split(/\s+/)
+                counts["${bcs[(i as int) - 1]}:${feats[(j as int) - 1]}".toString()] = (v as double) as int
+            }
+            // design (tests/data/guide_synthetic/README.md): GEX barcodes after 10xFB translation
+            def expected = [
+                "ACGTAACTCGCACGAC:G1": 5, "ACGTAACTCGCACGAC:G2": 3,
+                "ACTGATGGTGATTCTG:G1": 4, "ACTGATGGTGATTCTG:G3": 2,
+            ]
+            assert feats.sort() == ['G1', 'G2', 'G3']
+            assert bcs.sort() == ['ACGTAACTCGCACGAC', 'ACTGATGGTGATTCTG']
+            assert nf == 3
+            assert counts == expected
+            assert path(workflow.out.h5ad[0][1]).exists()
+        }
+    }
+}
