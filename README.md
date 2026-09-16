@@ -1,8 +1,7 @@
 # jam-sudo/ngspipeline
 
 [![GitHub Actions CI Status](https://github.com/jam-sudo/ngspipeline/actions/workflows/nf-test.yml/badge.svg)](https://github.com/jam-sudo/ngspipeline/actions/workflows/nf-test.yml)
-[![GitHub Actions Linting Status](https://github.com/jam-sudo/ngspipeline/actions/workflows/linting.yml/badge.svg)](https://github.com/jam-sudo/ngspipeline/actions/workflows/linting.yml)[![Cite with Zenodo](http://img.shields.io/badge/DOI-10.5281/zenodo.XXXXXXX-1073c8?labelColor=000000)](https://doi.org/10.5281/zenodo.XXXXXXX)
-[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
+[![GitHub Actions Linting Status](https://github.com/jam-sudo/ngspipeline/actions/workflows/linting.yml/badge.svg)](https://github.com/jam-sudo/ngspipeline/actions/workflows/linting.yml)[![nf-test](https://img.shields.io/badge/unit_tests-nf--test-337ab7.svg)](https://www.nf-test.com)
 
 [![Nextflow](https://img.shields.io/badge/version-%E2%89%A525.10.4-green?style=flat&logo=nextflow&logoColor=white&color=%230DC09D&link=https%3A%2F%2Fnextflow.io)](https://www.nextflow.io/)
 [![nf-core template version](https://img.shields.io/badge/nf--core_template-4.1.0-green?style=flat&logo=nfcore&logoColor=white&color=%2324B064&link=https%3A%2F%2Fnf-co.re)](https://github.com/nf-core/tools/releases/tag/4.1.0)
@@ -13,7 +12,7 @@
 
 ## Introduction
 
-**Status: in development** (v0.1.0dev). Nothing in this README is a claim of completion until the corresponding row in [`docs/progress.md`](docs/progress.md) is marked done with evidence.
+**Status: release candidate** (v0.1.0dev, not yet v1.0). Every claim in this README maps to a row in [`docs/progress.md`](docs/progress.md); the v1.0 badge is withheld until the human-executed items there are closed (T-03/T-05, the SLURM and AWS Batch runs for F7, the ALIVE baseline for F9).
 
 **jam-sudo/ngspipeline** turns raw Perturb-seq reads into an analysis-ready dataset for [ALIVE](https://github.com/jam-sudo/alive): FASTQ → gene-expression (GEX) and sgRNA count matrices → per-cell guide assignment → an ALIVE-ready `.h5ad`. It is a Nextflow DSL2 pipeline built on the nf-core template and nf-core modules; the four steps that have no nf-core module are hand-written local modules.
 
@@ -117,19 +116,21 @@ pipeline_info/{execution_report,execution_timeline,execution_trace,pipeline_dag}
 
 Sample: Replogle 2022 K562 essential-scale, GEM group `lane_4` (235 M GEX read pairs, 19.7 M guide read pairs; [001](docs/decisions/001-dataset.md)), prebuilt cDNA index, `--assign_method threshold`.
 
-| profile             | host                                                  | wall time                                                            | peak memory (process)            | cost | notes                                                                                                               |
-| ------------------- | ----------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------- |
-| `local,docker`      | MacBook M5 Pro 24 GB, colima 8 CPU / 20 GB, Rosetta   | 2 h 23 min (≈ 50 min without an operator-interrupted FastQC attempt) | 15.9 GB (KALLISTOBUSTOOLS_COUNT) | $0   | [docs/01](docs/01_guide_assignment_validation.md), [T-16 trace](docs/evidence/T-16_execution_trace_lane4_local.txt) |
-| `test,singularity`  | colima VM (Apptainer 1.5.3, aarch64 + Rosetta binfmt) | 2 min 31 s (test profile)                                            | 9.2 GB (GUIDE_COUNT)             | $0   | T-23                                                                                                                |
-| `slurm,singularity` | Discovery — pending (T-30)                            |                                                                      |                                  |      | waived if no account                                                                                                |
-| `awsbatch,docker`   | AWS Batch — pending (T-31, human-executed, ≤ $100)    |                                                                      |                                  |      |                                                                                                                     |
+| profile             | host                                                  | wall time                                                                                                 | peak memory (process)            | cost | notes                                                                                                               |
+| ------------------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------- |
+| `local,docker`      | MacBook M5 Pro 24 GB, colima 8 CPU / 20 GB, Rosetta   | 2 h 23 min (≈ 50 min without an operator-interrupted FastQC attempt)                                      | 15.9 GB (KALLISTOBUSTOOLS_COUNT) | $0   | [docs/01](docs/01_guide_assignment_validation.md), [T-16 trace](docs/evidence/T-16_execution_trace_lane4_local.txt) |
+| `test,singularity`  | colima VM (Apptainer 1.5.3, aarch64 + Rosetta binfmt) | 2 min 35 s (test profile; docker 1 min 33 s, identical h5ad — [docs/03](docs/03_cross_profile_hashes.md)) | 8.8 GB (GUIDE_COUNT)             | $0   | T-23, re-run under T-40                                                                                             |
+| `slurm,singularity` | Discovery — pending (T-30)                            |                                                                                                           |                                  |      | waived if no account                                                                                                |
+| `awsbatch,docker`   | AWS Batch — pending (T-31, human-executed, ≤ $100)    |                                                                                                           |                                  |      |                                                                                                                     |
 
 Per-process realtime and RSS for the local run are in the T-16 validation document.
 
 ## Development
 
 - Tasks, Definitions of Done and evidence: [`PLAN.md`](PLAN.md), [`docs/progress.md`](docs/progress.md).
-- Decision records (dataset, quantifier, dev host, naming, guide counting, non-single cells, test data): [`docs/decisions/`](docs/decisions/README.md).
+- Decision records (dataset, quantifier, dev host, naming, guide counting, non-single cells, test data, assignment thresholds): [`docs/decisions/`](docs/decisions/README.md).
+- Reproducibility checks: [`docs/02_resume_check.md`](docs/02_resume_check.md) (`-resume`), [`docs/03_cross_profile_hashes.md`](docs/03_cross_profile_hashes.md) (h5ad sha256 per profile).
+- Explanation-check questions from every PR, with reference answers: [`docs/04_explanation_checks.md`](docs/04_explanation_checks.md).
 - Validation against the authors' guide identities: [`docs/01_guide_assignment_validation.md`](docs/01_guide_assignment_validation.md).
 - Unit tests: `nf-test test .` (module tests under `modules/local/*/tests`, pipeline test in `tests/`).
 
