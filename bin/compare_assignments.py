@@ -44,15 +44,16 @@ def main():
         p, q = pipe[b], auth[b]
         av, ag = q["sgID_AB"], q["gene"]
         st = p["status"]; pv = p["guide_id"]; pg = p["target_gene"]; t1 = float(p["top1_umi"]); top2 = p.get("top2_guide_id", "")
+        top1v = p.get("top1_guide_id", "") or pv
         if st == "single":
             cat = "concordant" if pv == av else ("concordant_gene" if pg == ag else "discordant_vector")
         elif st == "multi":
             cat = "multi_pipeline_top1_matches" if pv == av else ("multi_pipeline_top2_matches" if top2 == av else "multi_pipeline_other")
         else:
-            cat = "unassigned_threshold" if (pv == av and 0 < t1 < a.min_umi) else "unassigned_other"
+            cat = "unassigned_threshold" if (top1v == av and 0 < t1 < a.min_umi) else "unassigned_other"
         cats[cat] += 1
         if cat != "concordant":
-            rows.append([b, cat, av, ag, st, pv, pg, p["top1_umi"], p["top2_umi"], p["ratio"], top2])
+            rows.append([b, cat, av, ag, st, pv or top1v, pg, p["top1_umi"], p["top2_umi"], p["ratio"], top2])
     for b in sorted(set(auth) - set(pipe)):
         if unf is not None and b in unf and b not in filt:
             cat = "filtered_by_pipeline"
