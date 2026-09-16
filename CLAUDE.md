@@ -10,7 +10,7 @@ Document roles — read in this order:
 - `docs/progress.md`: what is done, with evidence. The only status document.
 - `docs/decisions/`: one file per decision; `docs/decisions/README.md` is the index.
 - `docs/learning_debt.md`: unanswered explanation checks.
-Nothing is "done" until the human has run the DoD commands and recorded the result in `docs/progress.md`.
+  Nothing is "done" until the human has run the DoD commands and recorded the result in `docs/progress.md`.
 
 ## Current state
 
@@ -40,11 +40,11 @@ Nothing is "done" until the human has run the DoD commands and recorded the resu
 
 ## Commands
 
-- Lint:   `nf-core pipelines lint`
-- Test:   `nextflow run . -profile test,docker -resume`
-- Unit:   `nf-test test tests/`
+- Lint: `nf-core pipelines lint`
+- Test: `nextflow run . -profile test,docker -resume`
+- Unit: `nf-test test tests/`
 - Schema: `nf-core pipelines schema build`
-- Full:   `nextflow run . -profile <local|slurm|awsbatch>,<docker|singularity> --input samplesheet.csv --guides guide_library.csv --outdir results`
+- Full: `nextflow run . -profile <local|slurm|awsbatch>,<docker|singularity> --input samplesheet.csv --guides guide_library.csv --outdir results`
 
 ## Layout
 
