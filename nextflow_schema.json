@@ -148,7 +148,6 @@
                 },
                 "slurm_extra": {
                     "type": "string",
-                    "default": "",
                     "description": "Extra sbatch options appended to every job.",
                     "fa_icon": "fas fa-cog",
                     "hidden": true
