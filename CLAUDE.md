@@ -16,12 +16,12 @@ Document roles — read in this order:
 
 <!-- Kept by the agent since 2026-09-16 under the human's delegation. Keep to pointers; details live in docs/progress.md. -->
 
-- Active task: T-13b done; next T-40 (README completion) after human-executed T-03/T-05/T-30/T-31; Phase 5 needs learning debt cleared
+- Active task: T-40 agent part done (DoD re-verified on dev tip, docs/evidence/T-40_*); next T-42 (résumé line). v1.0 waits for human-executed T-03/T-05/T-30/T-31 and F9 — see docs/progress.md "Remaining for v1.0"
 - Pipeline name: ngspipeline — docs/decisions/004-naming.md
 - Dev host: MacBook + colima (Rosetta; Apptainer in the VM for singularity) — docs/decisions/003-dev-host.md (accepted)
 - Dataset: Replogle 2022 K562 essential lane_4 — docs/decisions/001-dataset.md (accepted); chemistry 10XV3 confirmed
 - Quantifier: kallisto|bustools, prebuilt cDNA index for the full reference — docs/decisions/002-quantifier.md (accepted)
-- Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35049830245 (T-20, all 13 checks); dev now contains PRs #2–#18
+- Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35058382108 (T-13b, nf-test) and …/35117807351 (T-05b, lint); dev contains PRs #2–#20; F5 at 8/10 green PR commits
 - Open learning debt: none recorded; reference answers to the 48 explanation-check questions are in docs/04_explanation_checks.md (written by the agent under delegation, 2026-09-16)
 
 ## Rules
