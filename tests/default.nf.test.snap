@@ -180,18 +180,16 @@
                 "cells_x_genes.genes.txt:md5,e6f8b480c750a55b773087559c738d34",
                 "cells_x_genes.mtx:md5,233aef3b949ac8f7d1d43dcbdce8fb7f",
                 "filter_barcodes.txt:md5,087ec8298103b58493243c92ffd8972f",
-                "matrix.ec:md5,63ef4d9e0cc9f3cf9f75a23c913be73f",
                 "transcripts.txt:md5,e39d18882a7d6d97c619dd9748ae5a6d",
                 "10x_fb_whitelist.txt:md5,1f2b4ba8a6fcfacf6dcf165ce09e974d",
                 "10x_feature_barcode_map.txt:md5,e18354644b3512f71533e7b5c494c698",
-                "assignment.tsv:md5,f6a5919319a2056457867c976a6f7e4a",
+                "assignment.tsv:md5,011b9f40afe27372deb1fbc25024acf9",
                 "assignment_summary.tsv:md5,c0b89671c451034a3b3a524d5197703f",
                 "adata.h5ad:md5,b1f12d1cffb0f35e2aedfb1e3f697481",
                 "cells_x_features.barcodes.txt:md5,06b48d8dfd661d6ba6791503fc537010",
                 "cells_x_features.genes.names.txt:md5,d37c3fa7318e5d13c219937cceab03a8",
                 "cells_x_features.genes.txt:md5,d37c3fa7318e5d13c219937cceab03a8",
                 "cells_x_features.mtx:md5,8773998c5a926a24c47873d804e096b1",
-                "matrix.ec:md5,ae90a96a3a60b11adee314a7da75536d",
                 "replogle_k562_lane4_test_guide_assignment_generalstats_mqc.tsv:md5,1c61e4eef802e3ed8cfa1543c6871af2",
                 "replogle_k562_lane4_test_guide_assignment_mqc.tsv:md5,f1a9ce90763ac92e240ca0dd8cc95a59",
                 "transcripts.txt:md5,fe6981b193031aea1c3585ef01fceeca",
@@ -225,7 +223,7 @@
                 "guide_nnz": 290
             }
         ],
-        "timestamp": "2026-09-15T16:23:21.979527",
+        "timestamp": "2026-09-15T22:25:12.067832",
         "meta": {
             "nf-test": "0.9.5",
             "nextflow": "26.04.6"
