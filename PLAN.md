@@ -45,23 +45,23 @@
 
 아래 전부가 `docs/progress.md`에 증빙(명령 출력 또는 링크)과 함께 기록되면 프로젝트 완료.
 
-| #   | 조건                                                                                                         | 증빙                               |
-| --- | ------------------------------------------------------------------------------------------------------------ | ---------------------------------- |
-| F1  | `nf-core pipelines lint` 오류 0                                                                              | 출력 첨부                          |
-| F2  | `nextflow run . -profile test,docker` 5분 내 성공                                                            | `pipeline_info/execution_timeline` |
-| F3  | `nextflow run . -profile test,singularity` 성공                                                              | 동일                               |
-| F4  | `nf-test test tests/` 전체 통과                                                                              | 출력                               |
-| F5  | GitHub Actions 최근 10커밋 CI 녹색                                                                           | Actions 링크                       |
-| F6  | `-resume` 검증 문서 `docs/02_resume_check.md` 존재, 재실행 프로세스가 중단 지점 이후만                       | 문서                               |
-| F7  | 선정 데이터 1샘플 전체 실행이 local·slurm(가능 시)·awsbatch 3개 프로파일에서 완주, 최종 h5ad의 `sha256` 동일 | `docs/03_cross_profile_hashes.md`  |
-| F8  | guide 할당 검증 문서 `docs/01_guide_assignment_validation.md`: 원논문 할당 대비 일치율, 불일치 분류          | 문서                               |
-| F9  | 최종 h5ad를 ALIVE 로더가 수정 없이 읽고 baseline 1회 실행                                                    | ALIVE 저장소 커밋 링크             |
-| F10 | MultiQC 리포트에 guide 할당 통계 섹션 포함                                                                   | HTML                               |
-| F11 | README: Mermaid 다이어그램, 실행법, 출력 스키마, 실행 통계(시간·비용), 결정 기록 링크                        | README                             |
-| F12 | `docs/learning_debt.md` 비어 있음                                                                            | 파일                               |
-| F13 | `docs/decisions/` 001~00N 모두 `Status: accepted`                                                            | 디렉토리                           |
+| #   | 조건                                                                                                                   | 증빙                               |
+| --- | ---------------------------------------------------------------------------------------------------------------------- | ---------------------------------- |
+| F1  | `nf-core pipelines lint` 오류 0                                                                                        | 출력 첨부                          |
+| F2  | `nextflow run . -profile test,docker` 5분 내 성공                                                                      | `pipeline_info/execution_timeline` |
+| F3  | `nextflow run . -profile test,singularity` 성공                                                                        | 동일                               |
+| F4  | `nf-test test tests/` 전체 통과                                                                                        | 출력                               |
+| F5  | GitHub Actions 최근 10커밋 CI 녹색                                                                                     | Actions 링크                       |
+| F6  | `-resume` 검증 문서 `docs/02_resume_check.md` 존재, 재실행 프로세스가 중단 지점 이후만                                 | 문서                               |
+| F7  | 선정 데이터 1샘플 전체 실행이 local·slurm(가능 시)·awsbatch(010으로 면제) 프로파일에서 완주, 최종 h5ad의 `sha256` 동일 | `docs/03_cross_profile_hashes.md`  |
+| F8  | guide 할당 검증 문서 `docs/01_guide_assignment_validation.md`: 원논문 할당 대비 일치율, 불일치 분류                    | 문서                               |
+| F9  | 최종 h5ad를 ALIVE 로더가 수정 없이 읽고 baseline 1회 실행                                                              | ALIVE 저장소 커밋 링크             |
+| F10 | MultiQC 리포트에 guide 할당 통계 섹션 포함                                                                             | HTML                               |
+| F11 | README: Mermaid 다이어그램, 실행법, 출력 스키마, 실행 통계(시간·비용), 결정 기록 링크                                  | README                             |
+| F12 | `docs/learning_debt.md` 비어 있음                                                                                      | 파일                               |
+| F13 | `docs/decisions/` 001~00N 모두 `Status: accepted`                                                                      | 디렉토리                           |
 
-F3, F7의 slurm은 Discovery 계정 미확보 시 면제(면제 사유를 progress에 기록). 나머지는 면제 없음.
+F3, F7의 slurm은 Discovery 계정 미확보 시 면제(면제 사유를 progress에 기록). F7의 awsbatch는 2026-09-16 사람의 결정으로 면제(docs/decisions/010-aws-waiver.md). 나머지는 면제 없음.
 
 ---
 
@@ -140,8 +140,8 @@ h5ad 생성은 `to_alive_h5ad`(T-14) 한 곳에서만 한다. 정량기 출력�
 - **선행**: 없음 (병렬)
 - **DoD**:
   - NEU Discovery 클러스터 계정 신청 제출(승인 여부는 별도 기록; 미승인 시 F3/F7 slurm 면제)
-  - AWS 계정 생성, Billing 예산 알람 $50 / $100 설정 스크린샷 `docs/aws_budget.png`
-  - IAM 사용자(관리자 아님) 생성, 액세스 키는 로컬 `~/.aws/credentials`만, repo에 없음(`git grep -i aws_secret` 결과 0)
+  - ~~AWS 계정 생성, Billing 예산 알람 $50 / $100 설정 스크린샷 `docs/aws_budget.png`~~ (010으로 면제)
+  - ~~IAM 사용자(관리자 아님) 생성, 액세스 키는 로컬 `~/.aws/credentials`만, repo에 없음~~ (010으로 면제; `git grep -i aws_secret` 결과 0은 유지)
 
 ---
 
@@ -288,7 +288,7 @@ h5ad 생성은 `to_alive_h5ad`(T-14) 한 곳에서만 한다. 정량기 출력�
 - **산출물**: `conf/slurm.config`
 - **DoD**: 전체 샘플 완주, `sha256sum results/alive/<sample>.h5ad` == T-16 값 → `docs/03_cross_profile_hashes.md`
 
-### T-31 AWS Batch 프로파일
+### T-31 AWS Batch 프로파일 (실행 면제 — 010, 2026-09-16; 설정 파일만 산출물)
 
 - **산출물**: `conf/awsbatch.config`, `docs/aws_setup.md`(S3 버킷, compute environment, job queue, IAM 최소 권한 정책 JSON, 리전)
 - **DoD**:
@@ -315,7 +315,7 @@ h5ad 생성은 `to_alive_h5ad`(T-14) 한 곳에서만 한다. 정량기 출력�
 
 ### T-42 이력서 문구 확정
 
-> Built **<pipeline name — 004 결정>**, a Nextflow DSL2 / nf-core-conventions pipeline processing Perturb-seq raw reads (FASTQ → gene and sgRNA count matrices → per-cell guide assignment → ML-ready h5ad); containerized (Docker/Singularity), CI-tested (GitHub Actions, nf-test), executed reproducibly on local, SLURM, and AWS Batch; guide assignment validated against published annotations (XX% concordance). Feeds ALIVE, a perturbation-response ML project.
+> Built **<pipeline name — 004 결정>**, a Nextflow DSL2 / nf-core-conventions pipeline processing Perturb-seq raw reads (FASTQ → gene and sgRNA count matrices → per-cell guide assignment → ML-ready h5ad); containerized (Docker/Singularity), CI-tested (GitHub Actions, nf-test), executed reproducibly on local and SLURM (AWS Batch waived by 010); guide assignment validated against published annotations (XX% concordance). Feeds ALIVE, a perturbation-response ML project.
 
 - **DoD**: 문구의 모든 주장이 F1~F13 증빙에 대응. 대응 없는 주장은 삭제.
 
