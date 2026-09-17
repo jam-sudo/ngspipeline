@@ -14,7 +14,7 @@
 
 [![Status: v1.0](https://img.shields.io/badge/status-v1.0-brightgreen)](docs/progress.md)
 
-**Status: v1.0** — every project completion condition F1–F13 in [`docs/progress.md`](docs/progress.md) is met with evidence (AWS Batch execution waived by [decision 010](docs/decisions/010-aws-waiver.md); the manifest version becomes 1.0.0 in the release to `master`). Every claim in this README maps to a row there.
+**Status: v1.0** — every project completion condition F1–F13 in [`docs/progress.md`](docs/progress.md) is met with evidence (AWS Batch execution waived by [decision 010](docs/decisions/010-aws-waiver.md); release 1.0.0 on `master`, development continues on `dev`). Every claim in this README maps to a row there.
 
 **jam-sudo/ngspipeline** turns raw Perturb-seq reads into an analysis-ready dataset for [ALIVE](https://github.com/jam-sudo/alive): FASTQ → gene-expression (GEX) and sgRNA count matrices → per-cell guide assignment → an ALIVE-ready `.h5ad`. It is a Nextflow DSL2 pipeline built on the nf-core template and nf-core modules; the four steps that have no nf-core module are hand-written local modules.
 
