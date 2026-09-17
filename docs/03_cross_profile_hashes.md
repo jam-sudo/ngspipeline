@@ -22,3 +22,7 @@ Same 18 MB test data, same host (MacBook / colima VM), Docker vs Apptainer:
 | `test,slurm,singularity` | Discovery `sharing` partition, singularity-ce 3.10.3 (T-30 smoke test) | `a801cc23a85d20c3e5122f88da84dbf1dcc9886a6a44cd0330cdd6fd10816427` | 802 s incl. queue |
 
 Identical bytes across two container engines and two schedulers (local executor, SLURM), so neither changes the h5ad; the full-sample F7 comparison is in the table above. Evidence: `docs/evidence/T-40_F2_*`, `docs/evidence/T-40_F3_test_singularity.txt`.
+
+## Version field note (release 1.0.0)
+
+Every hash above was produced with `manifest.version = 0.1.0dev`, which the pipeline writes into `uns['provenance']['version']`. Runs of the 1.0.0 release therefore differ from these hashes in that one string; the count matrices, `obs` and `var` are unaffected. To compare a 1.0.0 run with this table, compare `obs`, `var` and `X` numerically (the procedure at the top of this file). Verified on the release branch: test-profile h5ad sha256 `77975a790849711dc36b798f95a94a8c07e65a752a855d92b27a9c0d57b46038` (1.0.0) vs `a801cc23…` (0.1.0dev) — `obs`, `var`, `X` equal, the only `uns` difference is `provenance.version`.
