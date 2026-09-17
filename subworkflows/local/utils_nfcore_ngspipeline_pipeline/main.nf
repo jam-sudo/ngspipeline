@@ -85,24 +85,22 @@ workflow PIPELINE_INITIALISATION {
     // Create channel from input file provided through params.input
     //
 
+    // Relative FASTQ paths are resolved against the samplesheet's own directory so the
+    // committed test samplesheet works from any launch directory.
+    def samplesheet_dir = file(input).parent
     channel
         .fromList(samplesheetToList(input, "${projectDir}/assets/schema_input.json"))
         .map {
-            meta, fastq_1, fastq_2 ->
-                if (!fastq_2) {
-                    return [ meta.id, meta + [ single_end:true ], [ fastq_1 ] ]
-                } else {
-                    return [ meta.id, meta + [ single_end:false ], [ fastq_1, fastq_2 ] ]
+            meta, gex_r1, gex_r2, guide_r1, guide_r2 ->
+                def gex   = [ gex_r1, gex_r2 ].collect { resolveSamplesheetPath(it, samplesheet_dir) }
+                def guide = (guide_r1 || guide_r2) ? [ guide_r1, guide_r2 ].collect { resolveSamplesheetPath(it, samplesheet_dir) } : []
+                if (guide.size() == 1) {
+                    error("Please check input samplesheet -> guide_r1 and guide_r2 must be given together: ${meta.id}")
                 }
+                return [ meta.id, meta, gex, guide ]
         }
         .groupTuple()
-        .map { samplesheet ->
-            validateInputSamplesheet(samplesheet)
-        }
-        .map {
-            meta, fastqs ->
-                return [ meta, fastqs.flatten() ]
-        }
+        .map { samplesheet -> validateInputSamplesheet(samplesheet) }
         .set { ch_samplesheet }
 
     emit:
@@ -144,18 +142,32 @@ workflow PIPELINE_COMPLETION {
 */
 
 //
-// Validate channels from input samplesheet
+// Resolve a samplesheet path: absolute paths and URIs as given, relative paths against the samplesheet directory
+//
+def resolveSamplesheetPath(p, samplesheet_dir) {
+    def s = p.toString()
+    def f = (s.startsWith('/') || s =~ /^[A-Za-z][A-Za-z0-9+.-]*:\/\//) ? file(s) : file("${samplesheet_dir}/${s}")
+    if (!f.exists()) {
+        error("Please check input samplesheet -> FASTQ file does not exist: ${s} (resolved to ${f})")
+    }
+    return f
+}
+
+//
+// Merge the rows of one sample: GEX pairs from every row (sorted by R1 path), guide pairs from the rows that carry them
 //
 def validateInputSamplesheet(input) {
-    def (metas, fastqs) = input[1..2]
-
-    // Check that multiple runs of the same sample are of the same datatype i.e. single-end / paired-end
-    def endedness_ok = metas.collect{ meta -> meta.single_end }.unique().size == 1
-    if (!endedness_ok) {
-        error("Please check input samplesheet -> Multiple runs of a sample must be of the same datatype i.e. single-end or paired-end: ${metas[0].id}")
+    def (id, metas, gex_pairs, guide_pairs) = input
+    def expected = metas.collect { m -> m.expected_cells }.unique()
+    if (expected.size() != 1) {
+        error("Please check input samplesheet -> expected_cells must be identical across the rows of sample ${id}: ${expected}")
     }
-
-    return [ metas[0], fastqs ]
+    def gex   = gex_pairs.sort { pair -> pair[0].toString() }.flatten()
+    def guide = guide_pairs.findAll { pair -> pair }.sort { pair -> pair[0].toString() }.flatten()
+    if (!guide) {
+        error("Please check input samplesheet -> sample ${id} has no guide_r1/guide_r2 on any row")
+    }
+    return [ metas[0], gex, guide ]
 }
 //
 // Generate methods description for MultiQC

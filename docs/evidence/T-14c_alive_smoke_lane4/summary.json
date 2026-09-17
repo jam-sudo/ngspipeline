@@ -1,0 +1,31 @@
+{
+ "base": {
+  "checksum": "0c24a389e050f904657d0ca276d2ae4b29a01a03351b3fab7c5952f4a266b505",
+  "n_fit_cells": 420,
+  "n_genes_full": 85308,
+  "normalization": "library_size_10000_log1p",
+  "target_sum": 10000.0
+ },
+ "checksum": "bdf03985d33e22a97f654ce0f812527e90a183593d42e2dbaf261838140b1489",
+ "counts": {
+  "base_train": 17,
+  "conformal_calibration": 6,
+  "eligible_total": 38,
+  "excluded": 1588,
+  "method_development": 9,
+  "sealed_evaluation": 6
+ },
+ "exclusion_reasons": {
+  "below min_cells": 1331,
+  "no external feature": 257
+ },
+ "fractions": {
+  "base_train": 0.45,
+  "conformal_calibration": 0.15,
+  "method_development": 0.25,
+  "sealed_evaluation": 0.15
+ },
+ "n_fit_perturbations": 17,
+ "n_selected_genes": 2000,
+ "seed": 20260621
+}

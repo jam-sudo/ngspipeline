@@ -1,0 +1,12 @@
+# F10 — MultiQC sections on dev tip 67c7f84
+FastQC: 42
+Quantification: 6
+Guide assignment: 3
+kb count: 1
+id="guide_assignment_status"
+id="guide_assignment"
+id="header_guide_barcodes"
+id="header_guide_cells_with_reads"
+id="header_guide_features"
+id="header_guide_pseudoaligned_pct"
+id="header_guide_reads"

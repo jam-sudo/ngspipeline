@@ -1,0 +1,65 @@
+# T-30 — full lane_4 run on Discovery, -profile slurm,singularity (2026-09-16, dev tip f95e30a)
+
+Head process on login-00 under nohup (`source /scratch/yoon.jaem/runs/env.sh`: OpenJDK/19.0.1 + singularity/3.10.3 modules, Nextflow 26.04.6 in ~/bin, NXF_SINGULARITY_CACHEDIR on scratch). Inputs: FASTQ downloaded on the cluster from ENA (md5 24/24 OK against the local md5sums.txt), kallisto index rsynced from the Mac (sha256 edc2a551… identical), same guide library, `assign_params.yml` (min_umi 5, min_ratio 3) and chemistry as T-16.
+
+```
+nextflow run . -profile slurm,singularity -c /scratch/yoon.jaem/runs/sharing.config --slurm_partition sharing --slurm_account neu \
+  --input samplesheet_lane4_discovery.csv --guides K562_day6_essential_guide_library.csv \
+  --reference_index kallisto_cdna_GRCh38_ens116 --chemistry 10XV3 -params-file assign_params.yml \
+  --outdir /scratch/yoon.jaem/runs/lane4_slurm -work-dir /scratch/yoon.jaem/work_lane4 -resume
+# sharing.config:
+// Discovery "sharing" partition: 1 h wall-time limit, shared nodes (28+ cores, 186 GB). Caps every process so sbatch is accepted.
+process { resourceLimits = [ cpus: 28, memory: "180.GB", time: "1.h" ] }
+```
+
+```
+[e9/be55e3] JAM…ogle_k562_essential_lane4) | 1 of 1 ✔
+[7a/9f4e41] JAM…LINE:MULTIQC (ngspipeline) | 1 of 1 ✔
+executor >  slurm (8)
+[f2/0ba222] JAM…_k562_essential_lane4_gex) | 2 of 2 ✔
+[d4/059866] JAM…ogle_k562_essential_lane4) | 1 of 1 ✔
+[1d/149b50] JAM…6_essential_guide_library) | 1 of 1 ✔
+[61/24831b] JAM…ogle_k562_essential_lane4) | 1 of 1 ✔
+[a6/421b1b] JAM…ogle_k562_essential_lane4) | 1 of 1 ✔
+[e9/be55e3] JAM…ogle_k562_essential_lane4) | 1 of 1 ✔
+[7a/9f4e41] JAM…LINE:MULTIQC (ngspipeline) | 1 of 1 ✔
+-[jam-sudo/ngspipeline] Pipeline completed successfully-
+Completed at: 16-Sep-2026 14:52:11
+Duration    : 28m 9s
+CPU hours   : 2.8
+Succeeded   : 8
+EXIT 0 wall_seconds 1851
+```
+
+Per-process trace (status, realtime, peak_rss, name):
+```
+COMPLETED	56s	2.5 GB	JAMSUDO_NGSPIPELINE:NGSPIPELINE:FASTQC (replogle_k562_essential_lane4_guide)
+COMPLETED	57s	173.2 MB	JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_QUANT:GUIDE_INDEX (K562_day6_essential_guide_library)
+COMPLETED	4m 55s	11.1 GB	JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_QUANT:GUIDE_COUNT (replogle_k562_essential_lane4)
+COMPLETED	12m 6s	3 GB	JAMSUDO_NGSPIPELINE:NGSPIPELINE:FASTQC (replogle_k562_essential_lane4_gex)
+COMPLETED	21m 11s	35.7 GB	JAMSUDO_NGSPIPELINE:NGSPIPELINE:GEX_QUANT:KALLISTOBUSTOOLS_COUNT (replogle_k562_essential_lane4)
+COMPLETED	2s	186.5 MB	JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_ASSIGN (replogle_k562_essential_lane4)
+COMPLETED	24s	3.8 GB	JAMSUDO_NGSPIPELINE:NGSPIPELINE:TO_ALIVE_H5AD (replogle_k562_essential_lane4)
+COMPLETED	1m 13s	576.2 MB	JAMSUDO_NGSPIPELINE:NGSPIPELINE:MULTIQC (ngspipeline)
+```
+
+sacct and h5ad hash on the cluster:
+```
+305e31d1fa50bdcd12d2a82cef6ebf516e92c8c7d17f69eb5a02af09312a6b45  /scratch/yoon.jaem/runs/lane4_slurm/alive/replogle_k562_essential_lane4.h5ad
+total 186688
+drwxr-xr-x 2 yoon.jaem users      4096 Sep 16 14:50 .
+drwxr-xr-x 2 yoon.jaem users      4096 Sep 16 14:51 ..
+-rw-r--r-- 1 yoon.jaem users 191167882 Sep 16 14:50 replogle_k562_essential_lane4.h5ad
+JobID                     JobName  Partition    Elapsed     MaxRSS  AllocCPUS      State        NodeList
+------------ -------------------- ---------- ---------- ---------- ---------- ---------- ---------------
+51984455     nf-JAMSUDO_NGSPIPEL+    sharing   00:00:56                     2  COMPLETED           d3196
+51984456     nf-JAMSUDO_NGSPIPEL+    sharing   00:12:08                     2  COMPLETED           d3196
+51984457     nf-JAMSUDO_NGSPIPEL+    sharing   00:21:14                     6  COMPLETED           d3196
+51984458     nf-JAMSUDO_NGSPIPEL+    sharing   00:00:57                     2  COMPLETED           d3196
+51984462     nf-JAMSUDO_NGSPIPEL+    sharing   00:04:55                     2  COMPLETED           d3196
+51984496     nf-JAMSUDO_NGSPIPEL+    sharing   00:00:01                     2  COMPLETED           d3196
+51984497     nf-JAMSUDO_NGSPIPEL+    sharing   00:00:24                     2  COMPLETED           d3196
+51984498     nf-JAMSUDO_NGSPIPEL+    sharing   00:01:13                     1  COMPLETED           d3196
+```
+
+Local run (T-16) hash: 305e31d1fa50bdcd12d2a82cef6ebf516e92c8c7d17f69eb5a02af09312a6b45 — identical. Note: kb count peak RSS is 35.7 GB here vs 15.9 GB on the MacBook for the same job (different allocator/threads on the CentOS 7 node; the output is byte-identical).

@@ -8,3 +8,13 @@ testing*
 *.pyc
 null/
 .lineage/
+.nf-test.log
+.nf-test/
+.playwright-mcp/
+!tests/data/
+!tests/data/**
+
+# third-party agent skills installed by `npx skills add` (2026-09-16), not part of the pipeline
+.agents/
+.claude/skills/
+skills-lock.json

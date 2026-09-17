@@ -1,0 +1,33 @@
+# F1 — nf-core pipelines lint on dev tip 67c7f84 (2026-09-16T16:36:28Z)
+```
+│                                   │                    │ olBibliographyText  │
+│                                   │                    │ has been filled!    │
+│ utils_nfcore_ngspipeline_pipeline │ subworkflows/loca… │ subworkflow_todo:   │
+│                                   │                    │ TODO string in      │
+│                                   │                    │ main.nf: Optionally │
+│                                   │                    │ add bibliographic   │
+│                                   │                    │ entries to this     │
+│                                   │                    │ list.               │
+│ utils_nfcore_ngspipeline_pipeline │ subworkflows/loca… │ subworkflow_todo:   │
+│                                   │                    │ TODO string in      │
+│                                   │                    │ main.nf: Optionally │
+│                                   │                    │ add in-text         │
+│                                   │                    │ citation tools to   │
+│                                   │                    │ this list.          │
+│ utils_nextflow_pipeline           │ subworkflows/nf-c… │ subworkflow_version │
+│                                   │                    │ : New version       │
+│                                   │                    │ available           │
+│ utils_nfcore_pipeline             │ subworkflows/nf-c… │ subworkflow_version │
+│                                   │                    │ : New version       │
+│                                   │                    │ available           │
+│                                   ╵                    ╵                     │
+╰──────────────────────────────────────────────────────────────────────────────╯
+╭───────────────────────╮
+│ LINT RESULTS SUMMARY  │
+├───────────────────────┤
+│ [✔] 236 Tests Passed  │
+│ [?]  27 Tests Ignored │
+│ [!]  12 Test Warnings │
+│ [✗]   0 Tests Failed  │
+╰───────────────────────╯
+```

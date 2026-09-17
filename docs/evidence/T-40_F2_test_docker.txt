@@ -1,0 +1,49 @@
+# F2 — nextflow run . -profile test,docker on dev tip 67c7f84 (2026-09-16T16:36:41Z)
+```
+  gtf                       : /Users/jam/NGSpipeline/assets/test_data/ref/mini_genome.gtf.gz
+  chemistry                 : 10XV3
+
+Guide assignment options
+  min_umi                   : 5
+
+Institutional config options
+  config_profile_name       : Test profile
+  config_profile_description: Minimal test dataset to check pipeline function (bin/make_test_data.sh)
+
+Generic options
+  trace_report_suffix       : 2026-09-16_12-36-42
+
+Core Nextflow options
+  runName                   : exotic_carlsson
+  containerEngine           : docker
+  launchDir                 : /Users/jam/NGSpipeline
+  workDir                   : /Users/jam/ngs_data/runs/t40_dod/work
+  projectDir                : /Users/jam/NGSpipeline
+  userName                  : jam
+  profile                   : test,docker
+  configFiles               : /Users/jam/NGSpipeline/nextflow.config
+
+!! Only displaying parameters that differ from the pipeline defaults !!
+------------------------------------------------------[PIPELINE] jam-sudo/ngspipeline 0.1.0dev | profile=test,docker
+[WORKDIR] /Users/jam/ngs_data/runs/t40_dod/work
+[PROCESS 2b/1c852f] JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_QUANT:GUIDE_INDEX (guide_library_test)
+[PROCESS 0a/fc3e75] JAMSUDO_NGSPIPELINE:NGSPIPELINE:FASTQC (replogle_k562_lane4_test_gex)
+[PROCESS b2/508719] JAMSUDO_NGSPIPELINE:NGSPIPELINE:GEX_QUANT:KALLISTOBUSTOOLS_REF (mini_genome.fa)
+[PROCESS 47/55edaf] JAMSUDO_NGSPIPELINE:NGSPIPELINE:FASTQC (replogle_k562_lane4_test_guide)
+[PROCESS d3/ef51a3] JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_QUANT:GUIDE_COUNT (replogle_k562_lane4_test)
+[PROCESS 99/cbac92] JAMSUDO_NGSPIPELINE:NGSPIPELINE:GEX_QUANT:KALLISTOBUSTOOLS_COUNT (replogle_k562_lane4_test)
+[GEX_QUANT] replogle_k562_lane4_test: 119 cells x 200 genes (15046 non-zero) in counts_filtered; 99.2% of expected_cells=120[GUIDE_QUANT] replogle_k562_lane4_test: 172 barcodes x 108 features (290 non-zero); features == library protospacers: true (108); guide barcodes in GEX cells: 115/172, in any GEX barcode: 172/172; GEX cells with guide reads: 115/119[PROCESS 9c/9a2527] JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_ASSIGN (replogle_k562_lane4_test)
+[PROCESS 9e/bafa59] JAMSUDO_NGSPIPELINE:NGSPIPELINE:TO_ALIVE_H5AD (replogle_k562_lane4_test)
+[PROCESS a2/dbcb62] JAMSUDO_NGSPIPELINE:NGSPIPELINE:MULTIQC (ngspipeline)
+-[jam-sudo/ngspipeline] Pipeline completed successfully-
+[SUCCESS] completed=9 failed=0 cached=0
+real 93.25
+user 11.13
+sys 1.42
+```
+execution_report_2026-09-16_12-36-42.html
+execution_timeline_2026-09-16_12-36-42.html
+execution_trace_2026-09-16_12-36-42.txt
+ngspipeline_software_mqc_versions.yml
+params_2026-09-16_12-36-43.json
+pipeline_dag_2026-09-16_12-36-42.html

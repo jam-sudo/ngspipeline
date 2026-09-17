@@ -1,0 +1,50 @@
+# F3 — nextflow run . -profile test,singularity inside the colima VM (Apptainer 1.5.3, Java 21, Nextflow 26.04.6) on dev tip 67c7f84 (2026-09-16T16:45:21Z)
+
+Command: `colima ssh -- bash -lc 'cd /Users/jam/NGSpipeline && NXF_SINGULARITY_CACHEDIR=~/ngs_data/runs/sif_cache nextflow run . -profile test,singularity --outdir ~/ngs_data/runs/t40_sing/results'`
+
+```
+executor >  local (9)
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/9f/e9e6458524101631fa6f96258022cd9f/e9e645]8;;] JAM…gle_k562_lane4_test_guide) | 2 of 2 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/39/59f192bbe3c4afe6a51a3268c04f3139/59f192]8;;] JAM…TOOLS_REF (mini_genome.fa) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/6f/4c65fc63eb448fc2aba49800363fc56f/4c65fc]8;;] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/58/5d867d130bf67d46d6115e3926139058/5d867d]8;;] JAM…INDEX (guide_library_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/c0/5d6b16f9b8c61bf064414350b8a6e0c0/5d6b16]8;;] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/1d/327d2cc0452275f9cc58cbbdcc02ad1d/327d2c]8;;] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/17/c53aff84676b3398b2695d276c093e17/c53aff]8;;] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/4c/7d5dd27cf71881c252c5cceb2116f24c/7d5dd2]8;;] JAM…LINE:MULTIQC (ngspipeline) | 0 of 1
+[GEX_QUANT] replogle_k562_lane4_test: 119 cells x 200 genes (15046 non-zero) in counts_filtered; 99.2% of expected_cells=120
+[GUIDE_QUANT] replogle_k562_lane4_test: 172 barcodes x 108 features (290 non-zero); features == library protospacers: true (108); guide barcodes in GEX cells: 115/172, in any GEX barcode: 172/172; GEX cells with guide reads: 115/119
+Pulling Singularity image https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c8/c8e346f4f6080eadf1253505e6ff09ef004454fc18e8d672006fd7b222cc412e/data [cache /Users/jam/ngs_data/runs/sif_cache/community-cr-prod.seqera.io-docker-registry-v2-blobs-sha256-c8-c8e346f4f6080eadf1253505e6ff09ef004454fc18e8d672006fd7b222cc412e-data.img]
+executor >  local (9)
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/9f/e9e6458524101631fa6f96258022cd9f/e9e645]8;;] JAM…gle_k562_lane4_test_guide) | 2 of 2 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/39/59f192bbe3c4afe6a51a3268c04f3139/59f192]8;;] JAM…TOOLS_REF (mini_genome.fa) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/6f/4c65fc63eb448fc2aba49800363fc56f/4c65fc]8;;] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/58/5d867d130bf67d46d6115e3926139058/5d867d]8;;] JAM…INDEX (guide_library_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/c0/5d6b16f9b8c61bf064414350b8a6e0c0/5d6b16]8;;] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/1d/327d2cc0452275f9cc58cbbdcc02ad1d/327d2c]8;;] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/17/c53aff84676b3398b2695d276c093e17/c53aff]8;;] JAM…(replogle_k562_lane4_test) | 1 of 1 ✔
+[]8;;file:///Users/jam/ngs_data/runs/t40_sing/work/4c/7d5dd27cf71881c252c5cceb2116f24c/7d5dd2]8;;] JAM…LINE:MULTIQC (ngspipeline) | 1 of 1 ✔
+[GEX_QUANT] replogle_k562_lane4_test: 119 cells x 200 genes (15046 non-zero) in counts_filtered; 99.2% of expected_cells=120
+[GUIDE_QUANT] replogle_k562_lane4_test: 172 barcodes x 108 features (290 non-zero); features == library protospacers: true (108); guide barcodes in GEX cells: 115/172, in any GEX barcode: 172/172; GEX cells with guide reads: 115/119
+Pulling Singularity image https://community-cr-prod.seqera.io/docker/registry/v2/blobs/sha256/c8/c8e346f4f6080eadf1253505e6ff09ef004454fc18e8d672006fd7b222cc412e/data [cache /Users/jam/ngs_data/runs/sif_cache/community-cr-prod.seqera.io-docker-registry-v2-blobs-sha256-c8-c8e346f4f6080eadf1253505e6ff09ef004454fc18e8d672006fd7b222cc412e-data.img]
+-[jam-sudo/ngspipeline] Pipeline completed successfully-
+Completed at: 16-Sep-2026 12:45:14
+Duration    : 2m 33s
+CPU hours   : 0.1
+Succeeded   : 9
+wall_seconds 155
+```
+
+Per-process trace (name, status, realtime, peak_rss):
+```
+name	status	realtime	peak_rss
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:FASTQC (replogle_k562_lane4_test_gex)	COMPLETED	7s	773.5 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:FASTQC (replogle_k562_lane4_test_guide)	COMPLETED	6s	450.2 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_QUANT:GUIDE_INDEX (guide_library_test)	COMPLETED	8s	214.5 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GEX_QUANT:KALLISTOBUSTOOLS_REF (mini_genome.fa)	COMPLETED	15s	348.7 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_QUANT:GUIDE_COUNT (replogle_k562_lane4_test)	COMPLETED	46s	8.8 GB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GEX_QUANT:KALLISTOBUSTOOLS_COUNT (replogle_k562_lane4_test)	COMPLETED	40s	7.8 GB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:GUIDE_ASSIGN (replogle_k562_lane4_test)	COMPLETED	1s	21.3 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:TO_ALIVE_H5AD (replogle_k562_lane4_test)	COMPLETED	3s	114.8 MB
+JAMSUDO_NGSPIPELINE:NGSPIPELINE:MULTIQC (ngspipeline)	COMPLETED	15.5s	1.1 GB
+```
