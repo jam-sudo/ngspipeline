@@ -3,6 +3,16 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.1.0dev - [unreleased]
+
+### `Added`
+
+### `Fixed`
+
+### `Dependencies`
+
+### `Deprecated`
+
 ## v1.0.0 - [2026-09-17]
 
 First release. Perturb-seq raw reads → GEX and sgRNA count matrices → per-cell guide assignment → ALIVE-ready h5ad. Every completion condition F1–F13 of `PLAN.md` is recorded with evidence in `docs/progress.md`.
