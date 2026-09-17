@@ -58,7 +58,7 @@ Status vocabulary: `done` = DoD commands run (by the human, or by the agent unde
 
 ## Remaining (as of 2026-09-17)
 
-1. ~~Release PR `dev` → `master`~~ done 2026-09-17 (PR #31); post-release h5ad hashes differ from docs/03 only in `uns['provenance']['version']` (note in docs/03).
+1. ~~Release PR `dev` → `master`~~ done 2026-09-17 (PR #32 to dev, then dev → master); post-release h5ad hashes differ from docs/03 only in `uns['provenance']['version']` (note in docs/03).
 2. Optional: T-41 nf-core contribution; the human attempting the explanation checks (F12 note).
 3. Housekeeping on Discovery: `/scratch/yoon.jaem/ngs/fastq` (286 GB) and `runs/pool12` (results) are kept; work dirs deleted.
 
