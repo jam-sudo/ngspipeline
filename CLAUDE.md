@@ -16,7 +16,7 @@ Document roles — read in this order:
 
 <!-- Kept by the agent since 2026-09-16 under the human's delegation. Keep to pointers; details live in docs/progress.md. -->
 
-- Active task: all F1–F13 met (F9 via docs/07, 2026-09-17); next: release PR dev → master (manifest 1.0.0, CHANGELOG). T-41 optional.
+- Active task: released 1.0.0 (PR #31 dev → master, 2026-09-17); all F1–F13 met. Optional: T-41 nf-core contribution; human attempts the explanation checks (F12 note).
 - Pipeline name: ngspipeline — docs/decisions/004-naming.md
 - Dev host: MacBook + colima (Rosetta; Apptainer in the VM for singularity) — docs/decisions/003-dev-host.md (accepted)
 - Dataset: Replogle 2022 K562 essential lane_4 — docs/decisions/001-dataset.md (accepted); chemistry 10XV3 confirmed

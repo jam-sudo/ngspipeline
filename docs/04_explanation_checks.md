@@ -195,3 +195,11 @@ Numbering: `T-xx.n` = question n of the PR for task T-xx (PR bodies #1–#19).
 **T-14c.2 저자 표보다 세포가 두 배 가까이 많은 이유와, 그것이 일치율에 미치는 영향.** 저자는 자체 QC(UMI·mito 기준 등)로 세포를 더 걸렀고, 이 파이프라인은 bustools 필터만 쓴다(ALIVE가 QC를 하지 않으므로 006에서 의도적으로 최소 필터). 저자 세포는 12 lane 모두 100 % 파이프라인에 존재하므로 일치율 분모(공통 세포)는 저자 세포 전체이며, 추가 세포는 `not_in_authors`로만 집계되어 일치율에 영향이 없다. 다만 ALIVE 쪽에서는 세포가 많아져 ≥64 세포 유전자가 227이 아닌 456개가 되었다.
 
 **T-14c.3 mock encoder로 돌린 `prepare`/`fit`이 F9의 증빙이 되는 범위.** F9는 "로더가 수정 없이 읽고 baseline 1회 실행"이다. `prepare`는 실제 로더(`build_index`)로 h5ad를 읽어 적격성·분할을 만들고, `fit`은 실제 응답공간(정규화·HVG·PCA)과 ridge base predictor를 우리 세포 24,021개로 학습했다. mock encoder는 perturbation 특성(ESM-2 임베딩)만 난수로 대체하므로 "로더와 baseline 코드 경로가 이 h5ad로 끝까지 돈다"는 것은 증명되고, "예측이 과학적으로 의미 있다"는 것은 증명되지 않는다. 그래서 docs/07과 ALIVE PR #19에 NOT a scientific run을 명시했다.
+
+## Release 1.0.0 (PR #31)
+
+**R.1 `included_configs` 린트를 끈 근거.** 그 검사는 nf-core/configs 저장소에 `pipeline/<name>.config`가 있는 공식 nf-core 파이프라인을 전제로, 릴리스에서 그 include 줄이 주석 해제되었는지 본다. 이 파이프라인은 nf-core 조직 밖에 있어 그 파일이 없고, 줄을 살리면 실행 시 404를 받는다. 검사 자체를 삭제하지 않고 `.nf-core.yml`에 사유와 함께 `included_configs: false`를 적어, 왜 무시했는지가 저장소에 남게 했다(규칙 2의 정신: 기대값을 바꿔 통과시키는 것이 아니라 적용 불가를 기록).
+
+**R.2 버전 번호를 올리면 h5ad 해시가 바뀌는 이유와 처리.** `to_alive_h5ad.py`가 `workflow.manifest.version`을 `uns['provenance']['version']`에 기록하므로 같은 입력이라도 0.1.0dev와 1.0.0의 파일은 그 문자열만큼 다르다. docs/03의 해시는 모두 0.1.0dev로 만든 것이고, 이 사실을 docs/03에 명시했으며 1.0.0 실행과의 비교는 `obs`/`var`/`X` 수치 비교로 한다. 버전을 provenance에서 빼면 해시는 안정되지만 "어떤 코드가 만든 파일인가"를 잃으므로 빼지 않았다.
+
+**R.3 왜 dev에는 `dev` 접미 버전을 유지하고 master에서만 1.0.0인가.** nf-core 린트는 일반 모드에서 `manifest.version`이 `dev`로 끝나길, `--release` 모드(master 대상 PR의 CI)에서는 숫자 버전과 `.nf-core.yml`·CHANGELOG의 일치를 요구한다. 그래서 릴리스 브랜치에서만 버전을 올리고 master로 병합하며, dev는 병합 후 다음 개발 버전(1.1.0dev)으로 되돌리는 것이 nf-core의 릴리스 흐름이다.
