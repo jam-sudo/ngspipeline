@@ -16,12 +16,12 @@ Document roles — read in this order:
 
 <!-- Kept by the agent since 2026-09-16 under the human's delegation. Keep to pointers; details live in docs/progress.md. -->
 
-- Active task: released 1.0.0 (PR #31 dev → master, 2026-09-17); all F1–F13 met. Optional: T-41 nf-core contribution; human attempts the explanation checks (F12 note).
+- Active task: 1.0.0 released on master (2026-09-17, tag 1.0.0); dev is 1.1.0dev. Optional: T-41 nf-core contribution; human attempts the explanation checks (F12 note).
 - Pipeline name: ngspipeline — docs/decisions/004-naming.md
 - Dev host: MacBook + colima (Rosetta; Apptainer in the VM for singularity) — docs/decisions/003-dev-host.md (accepted)
 - Dataset: Replogle 2022 K562 essential lane_4 — docs/decisions/001-dataset.md (accepted); chemistry 10XV3 confirmed
 - Quantifier: kallisto|bustools, prebuilt cDNA index for the full reference — docs/decisions/002-quantifier.md (accepted)
-- Last green CI: https://github.com/jam-sudo/ngspipeline/actions/runs/35124448158 (T-40, nf-test + lint); dev contains PRs #2–#22; F5 done (10 green PR commits)
+- Last green CI: release PR #33 https://github.com/jam-sudo/ngspipeline/pull/33 (50 checks: docker/conda/singularity × Nextflow 25.10.4 and latest); master = 4851c048
 - Open learning debt: none recorded; reference answers to the 48 explanation-check questions are in docs/04_explanation_checks.md (written by the agent under delegation, 2026-09-16)
 
 ## Rules
