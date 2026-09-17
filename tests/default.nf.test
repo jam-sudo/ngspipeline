@@ -14,7 +14,8 @@ nextflow_pipeline {
 
         then {
             // stable_path: All files + folders in ${params.outdir}/ with a stable path (including file name)
-            def stable_path = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}'])
+            // multiqc_plots/** is excluded: the set of plot files depends on the MultiQC build (conda vs container)
+            def stable_path = getAllFilesFromDir(params.outdir, relative: true, includeDir: true, ignore: ['pipeline_info/*.{html,json,txt}', 'multiqc/multiqc_plots/**'])
             // stable_content: All files in ${params.outdir}/ with stable content
             def stable_content = getAllFilesFromDir(params.outdir, ignoreFile: 'tests/.nftignore')
             // GEX count matrix dimensions (T-11 DoD: cells >= 80% of the 120 test-data cells)
@@ -31,7 +32,8 @@ nextflow_pipeline {
             assertAll(
                 { assert snapshot(
                     // pipeline versions.yml file for multiqc from which Nextflow version is removed because we test pipelines on multiple Nextflow versions
-                    removeNextflowVersion("$outputDir/pipeline_info/ngspipeline_software_mqc_versions.yml"),
+                    // interpreter patch versions (python) differ between the conda and container builds of the same environment, so they are dropped
+                    removeNextflowVersion("$outputDir/pipeline_info/ngspipeline_software_mqc_versions.yml").collectEntries { proc, tools -> [ (proc): (tools instanceof Map ? tools.findAll { t, v -> t != 'python' } : tools) ] },
                     // All stable path name, with a relative path
                     stable_path,
                     // All files with stable contents
