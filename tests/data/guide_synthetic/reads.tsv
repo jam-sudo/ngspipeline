@@ -1,0 +1,21 @@
+read	design
+synth_1	A/G1 umi1
+synth_2	A/G1 umi2
+synth_3	A/G1 umi3
+synth_4	A/G1 umi4
+synth_5	A/G1 umi5 1mm
+synth_6	A/G1 duplicate read of umi1
+synth_7	A/G1 duplicate read of umi2
+synth_8	A/G2
+synth_9	A/G2
+synth_10	A/G2
+synth_11	B/G1 offset30
+synth_12	B/G1 offset31
+synth_13	B/G1 offset32
+synth_14	B/G1 offset33
+synth_15	B/G3
+synth_16	B/G3
+synth_17	B/G1 2mm -> not counted
+synth_18	A/unknown -> not counted
+synth_19	barcode not on whitelist -> not counted
+synth_20	barcode with N -> not counted

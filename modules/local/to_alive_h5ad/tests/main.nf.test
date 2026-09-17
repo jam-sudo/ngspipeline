@@ -1,0 +1,70 @@
+nextflow_process {
+
+    name "TO_ALIVE_H5AD single-sample and pooled (T-14, decision 011)"
+    script "modules/local/to_alive_h5ad/main.nf"
+    process "TO_ALIVE_H5AD"
+    tag "alive"
+
+    test("single sample: bare barcodes, non-single cells excluded") {
+        when {
+            params { outdir = "$outputDir" }
+            process {
+                """
+                def d = "${projectDir}/tests/data/alive_synthetic"
+                input[0] = [ [ id: 's1' ], [ 's1' ], file("\${d}/s1.count"), file("\${d}/s1.assignment.tsv") ]
+                input[1] = false
+                """
+            }
+        }
+        then {
+            assert process.success
+            assert process.out.h5ad[0][1].endsWith("s1.h5ad")
+            // fixture design: c1 (GENEA) + c2 (non-targeting) kept; c3 multi and c4 no_guide_reads excluded
+            def s = path(process.out.summary[0][1]).json
+            assert s.cells_written == 2 && s.genes == 3 && s.pooled == false && s.obs_index == "<barcode>"
+            assert s.obs_ids_head == ["c1", "c2"]
+            assert s.status_counts.multi == 1 && s.status_counts.no_guide_reads == 1 && s.control_cells == 1
+        }
+    }
+
+    test("pooled: two samples with a shared barcode become 4 cells with <barcode>-<sample> ids") {
+        when {
+            params { outdir = "$outputDir" }
+            process {
+                """
+                def d = "${projectDir}/tests/data/alive_synthetic"
+                input[0] = [ [ id: 'pooled' ], [ 's1', 's2' ], [ file("\${d}/s1.count"), file("\${d}/s2.count") ], [ file("\${d}/s1.assignment.tsv"), file("\${d}/s2.assignment.tsv") ] ]
+                input[1] = false
+                """
+            }
+        }
+        then {
+            assert process.success
+            assert process.out.h5ad[0][1].endsWith("pooled.h5ad")
+            // s1: c1 GENEA, c2 non-targeting; s2: c1 GENEB, c5 GENEA → 4 cells, 3 labels, 1 control; multi 1, unassigned 1, no_guide_reads 1
+            def s = path(process.out.summary[0][1]).json
+            assert s.cells_written == 4 && s.genes == 3 && s.pooled == true && s.samples == ["s1", "s2"]
+            assert s.obs_index == "<barcode>-<sample_id>" && s.obs_ids_head == ["c1-s1", "c2-s1", "c1-s2", "c5-s2"]
+            assert s.perturbation_labels == 3 && s.control_cells == 1
+            assert s.status_counts.multi == 1 && s.status_counts.unassigned == 1 && s.status_counts.no_guide_reads == 1
+        }
+    }
+
+    test("pooled with --keep-nonsingle keeps every matrix cell") {
+        when {
+            params { outdir = "$outputDir" }
+            process {
+                """
+                def d = "${projectDir}/tests/data/alive_synthetic"
+                input[0] = [ [ id: 'pooled' ], [ 's1', 's2' ], [ file("\${d}/s1.count"), file("\${d}/s2.count") ], [ file("\${d}/s1.assignment.tsv"), file("\${d}/s2.assignment.tsv") ] ]
+                input[1] = true
+                """
+            }
+        }
+        then {
+            assert process.success
+            def s = path(process.out.summary[0][1]).json
+            assert s.cells_written == 7 && s.obs_ids_head.size() == 7
+        }
+    }
+}
