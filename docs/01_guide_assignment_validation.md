@@ -108,3 +108,24 @@ Concordance on the authors' cells is 96.0 % (threshold) / 91.8 % (mixture) at th
 | filtered_by_pipeline   | authors' cell present in the unfiltered GEX matrix but removed by the bustools cell filter |
 | not_called_by_pipeline | authors' cell absent from the pipeline's GEX matrix                                        |
 | not_in_authors         | pipeline cell not in the authors' table (dropped by their guide calling or QC)             |
+
+## Appendix — the same check on 12 GEM groups (2026-09-17, Discovery run, T-14c)
+
+Same method and thresholds as above (`min_umi 5`, `min_ratio 3`, threshold), one sample per lane, `bin/compare_lanes.sh` against the authors' `gem_group` cells. Every authors' cell of every GEM group is present in the pipeline's filtered matrix, which also confirms the lane_N ↔ gem_group N mapping for all 12. Nothing was tuned; the per-lane reports with category tables are in `docs/evidence/T-14c_concordance/`.
+
+| lane (= gem_group) | authors' cells | pipeline cells | authors' cells found | concordant (same vector) | gene level             | multi | unassigned_threshold | unassigned_other | discordant_vector |
+| ------------------ | -------------- | -------------- | -------------------- | ------------------------ | ---------------------- | ----- | -------------------- | ---------------- | ----------------- |
+| 1                  | 6553           | 12391          | 6553 (100 %)         | 6271 = 95.7%             | 6295 (96.1% of common) | 135   | 98                   | 4                | 21                |
+| 2                  | 6667           | 12618          | 6667 (100 %)         | 6379 = 95.7%             | 6397 (96.0% of common) | 131   | 105                  | 4                | 30                |
+| 3                  | 6776           | 13151          | 6776 (100 %)         | 6488 = 95.7%             | 6503 (96.0% of common) | 142   | 100                  | 10               | 21                |
+| 4                  | 3681           | 7132           | 3681 (100 %)         | 3532 = 96.0%             | 3542 (96.2% of common) | 91    | 26                   | 7                | 15                |
+| 5                  | 6194           | 12090          | 6194 (100 %)         | 5948 = 96.0%             | 5967 (96.3% of common) | 137   | 59                   | 12               | 19                |
+| 6                  | 7019           | 13586          | 7019 (100 %)         | 6750 = 96.2%             | 6770 (96.5% of common) | 141   | 73                   | 16               | 19                |
+| 7                  | 6746           | 12875          | 6746 (100 %)         | 6453 = 95.7%             | 6471 (95.9% of common) | 122   | 114                  | 11               | 28                |
+| 8                  | 7036           | 13363          | 7036 (100 %)         | 6776 = 96.3%             | 6799 (96.6% of common) | 148   | 59                   | 8                | 22                |
+| 9                  | 6354           | 12565          | 6354 (100 %)         | 6059 = 95.4%             | 6080 (95.7% of common) | 132   | 99                   | 10               | 33                |
+| 10                 | 6764           | 13601          | 6764 (100 %)         | 6473 = 95.7%             | 6495 (96.0% of common) | 128   | 104                  | 9                | 28                |
+| 11                 | 6555           | 13012          | 6555 (100 %)         | 6292 = 96.0%             | 6316 (96.4% of common) | 122   | 72                   | 11               | 34                |
+| 12                 | 5840           | 11845          | 5840 (100 %)         | 5564 = 95.3%             | 5587 (95.7% of common) | 132   | 83                   | 15               | 23                |
+
+Concordance is 95.3–96.3 % of the authors' cells on every lane (99.1–99.4 % of the cells the pipeline calls single), i.e. the lane_4 result was not a lucky lane. The pipeline keeps about twice as many barcodes as the authors after bustools filtering; the extra cells are not in the authors' table (`not_in_authors`) and are the main reason the pooled h5ad has 104,551 single cells against the authors' 76,185 for the same GEM groups.

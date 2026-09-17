@@ -4,7 +4,7 @@ Rule (PLAN.md T-42): every claim maps to F1–F13 evidence in `docs/progress.md`
 
 ## Line supported by today's evidence (2026-09-16)
 
-> Built **ngspipeline**, a Nextflow DSL2 / nf-core-conventions pipeline processing Perturb-seq raw reads (FASTQ → gene and sgRNA count matrices → per-cell guide assignment → ML-ready h5ad); containerized (Docker/Singularity), CI-tested (GitHub Actions, nf-test), executed reproducibly on a laptop and a SLURM cluster (byte-identical h5ad), `-resume`-verified; guide assignment validated against the published Replogle 2022 annotations (96 % per-cell concordance without threshold tuning). Upstream of ALIVE, a perturbation-response ML project.
+> Built **ngspipeline**, a Nextflow DSL2 / nf-core-conventions pipeline processing Perturb-seq raw reads (FASTQ → gene and sgRNA count matrices → per-cell guide assignment → ML-ready h5ad); containerized (Docker/Singularity), CI-tested (GitHub Actions, nf-test), executed reproducibly on a laptop and a SLURM cluster (byte-identical h5ad), `-resume`-verified; guide assignment validated against the published Replogle 2022 annotations (96 % per-cell concordance without threshold tuning). Feeds ALIVE, a perturbation-response ML project (its loader and baseline fit consume the pooled h5ad unchanged).
 
 ## Claim → evidence
 
@@ -25,4 +25,4 @@ Rule (PLAN.md T-42): every claim maps to F1–F13 evidence in `docs/progress.md`
 | "… and AWS Batch"            | T-31 (AWS Batch, human, ≤ $100) → third F7 hash                      |
 | "feeds ALIVE" (baseline run) | F9: baseline on an h5ad with enough GEM groups, commit link in ALIVE |
 
-When F9 closes, restore "Feeds ALIVE". The AWS Batch claim stays out (010).
+The AWS Batch claim stays out (010). Everything else in the PLAN wording is now evidenced.

@@ -1,0 +1,38 @@
+{
+ "cells_written": 104551,
+ "control_cells": 3780,
+ "genes": 85308,
+ "obs_ids_head": [
+  "AAACCCAAGCTATCTG-replogle_k562_essential_lane1",
+  "AAACCCACAATGAAAC-replogle_k562_essential_lane1",
+  "AAACCCAGTGCATTTG-replogle_k562_essential_lane1",
+  "AAACCCATCCGTTGGG-replogle_k562_essential_lane1",
+  "AAACCCATCGTCGACG-replogle_k562_essential_lane1",
+  "AAACCCATCTAGATCG-replogle_k562_essential_lane1",
+  "AAACCCATCTCCACTG-replogle_k562_essential_lane1",
+  "AAACGAAAGAGGATGA-replogle_k562_essential_lane1"
+ ],
+ "obs_index": "<barcode>-<sample_id>",
+ "perturbation_labels": 2052,
+ "pooled": true,
+ "samples": [
+  "replogle_k562_essential_lane1",
+  "replogle_k562_essential_lane10",
+  "replogle_k562_essential_lane11",
+  "replogle_k562_essential_lane12",
+  "replogle_k562_essential_lane2",
+  "replogle_k562_essential_lane3",
+  "replogle_k562_essential_lane4",
+  "replogle_k562_essential_lane5",
+  "replogle_k562_essential_lane6",
+  "replogle_k562_essential_lane7",
+  "replogle_k562_essential_lane8",
+  "replogle_k562_essential_lane9"
+ ],
+ "status_counts": {
+  "multi": 28911,
+  "no_guide_reads": 0,
+  "single": 104551,
+  "unassigned": 14767
+ }
+}

@@ -187,3 +187,11 @@ Numbering: `T-xx.n` = question n of the PR for task T-xx (PR bodies #1–#19).
 **T-05.2 실행 DAG(`pipeline_dag.html`)와 코드의 차이.** DAG는 한 번의 실행에서 실제로 태스크가 생긴 프로세스와 채널만 그린다. 코드에 있는 kallisto/simpleaf/cellranger 분기는 test 프로파일(STAR)에서는 나타나지 않는다. 그래서 "파이프라인이 무엇을 할 수 있는가"는 코드에서, "이번에 무엇을 했는가"는 DAG와 trace에서 읽어야 한다.
 
 **T-05.3 Nextflow 26.04.6이 scrnaseq 4.0.0의 설정을 거부한 이유와 대응.** 26.x의 엄격 설정 파서는 `includeConfig`가 가리키는 파일 부재와 문자열 안의 `${manifest.version}` 참조를 오류로 본다(우리 저장소도 같은 이유로 `while`·슬래시 정규식을 걷어냈다). 훈련 목적의 실행이므로 파이프라인을 고치지 않고 공식 런처의 `NXF_VER=25.10.4`로 돌렸고, 이 사실을 노트에 적었다.
+
+## T-14c 풀링 실행과 ALIVE baseline (PR #30)
+
+**T-14c.1 lane_4 h5ad가 세 번째 실행에서도 같은 바이트인 것이 왜 중요한가.** 이번에는 12개 샘플이 동시에 돌고 work dir도 새것이었으며 `-resume` 캐시가 전혀 없었다. 그런데도 `305e31d1…`이 나왔으므로 "같은 입력·코드·컨테이너면 같은 출력"이 우연이 아니라는 세 번째 독립 증거다. 반면 pooled.h5ad는 처음 만든 파일이라 비교 대상이 없고, 그 해시(`ce24bff9…`)는 앞으로의 재실행 비교 기준이 된다.
+
+**T-14c.2 저자 표보다 세포가 두 배 가까이 많은 이유와, 그것이 일치율에 미치는 영향.** 저자는 자체 QC(UMI·mito 기준 등)로 세포를 더 걸렀고, 이 파이프라인은 bustools 필터만 쓴다(ALIVE가 QC를 하지 않으므로 006에서 의도적으로 최소 필터). 저자 세포는 12 lane 모두 100 % 파이프라인에 존재하므로 일치율 분모(공통 세포)는 저자 세포 전체이며, 추가 세포는 `not_in_authors`로만 집계되어 일치율에 영향이 없다. 다만 ALIVE 쪽에서는 세포가 많아져 ≥64 세포 유전자가 227이 아닌 456개가 되었다.
+
+**T-14c.3 mock encoder로 돌린 `prepare`/`fit`이 F9의 증빙이 되는 범위.** F9는 "로더가 수정 없이 읽고 baseline 1회 실행"이다. `prepare`는 실제 로더(`build_index`)로 h5ad를 읽어 적격성·분할을 만들고, `fit`은 실제 응답공간(정규화·HVG·PCA)과 ridge base predictor를 우리 세포 24,021개로 학습했다. mock encoder는 perturbation 특성(ESM-2 임베딩)만 난수로 대체하므로 "로더와 baseline 코드 경로가 이 h5ad로 끝까지 돈다"는 것은 증명되고, "예측이 과학적으로 의미 있다"는 것은 증명되지 않는다. 그래서 docs/07과 ALIVE PR #19에 NOT a scientific run을 명시했다.

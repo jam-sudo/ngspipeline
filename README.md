@@ -12,7 +12,9 @@
 
 ## Introduction
 
-**Status: release candidate** (v0.1.0dev, not yet v1.0). Every claim in this README maps to a row in [`docs/progress.md`](docs/progress.md); the v1.0 badge is withheld until the human-executed items there are closed (T-05 learning notes, the ALIVE baseline for F9); AWS Batch execution was waived by decision 010.
+[![Status: v1.0](https://img.shields.io/badge/status-v1.0-brightgreen)](docs/progress.md)
+
+**Status: v1.0** — every project completion condition F1–F13 in [`docs/progress.md`](docs/progress.md) is met with evidence (AWS Batch execution waived by [decision 010](docs/decisions/010-aws-waiver.md); the manifest version becomes 1.0.0 in the release to `master`). Every claim in this README maps to a row there.
 
 **jam-sudo/ngspipeline** turns raw Perturb-seq reads into an analysis-ready dataset for [ALIVE](https://github.com/jam-sudo/alive): FASTQ → gene-expression (GEX) and sgRNA count matrices → per-cell guide assignment → an ALIVE-ready `.h5ad`. It is a Nextflow DSL2 pipeline built on the nf-core template and nf-core modules; the four steps that have no nf-core module are hand-written local modules.
 
@@ -88,7 +90,7 @@ min_ratio: 3
 ```
 
 > [!NOTE]
-> `--min_ratio 3` on the command line is currently rejected by the parameter validation (parsed as a string on this parameter name); a params file works.
+> Numeric and boolean parameters given as `--name value` on the command line (`--min_ratio 3`, `--pool_alive true`) are rejected by the parameter validation (parsed as strings); put them in a `-params-file` (`pool_alive: true`) or, for booleans, pass the bare flag `--pool_alive`.
 
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
@@ -118,12 +120,13 @@ pipeline_info/{execution_report,execution_timeline,execution_trace,pipeline_dag}
 
 Sample: Replogle 2022 K562 essential-scale, GEM group `lane_4` (235 M GEX read pairs, 19.7 M guide read pairs; [001](docs/decisions/001-dataset.md)), prebuilt cDNA index, `--assign_method threshold`.
 
-| profile             | host                                                                                           | wall time                                                                                                 | peak memory (process)            | cost                    | notes                                                                                                               |
-| ------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | -------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `local,docker`      | MacBook M5 Pro 24 GB, colima 8 CPU / 20 GB, Rosetta                                            | 2 h 23 min (≈ 50 min without an operator-interrupted FastQC attempt)                                      | 15.9 GB (KALLISTOBUSTOOLS_COUNT) | $0                      | [docs/01](docs/01_guide_assignment_validation.md), [T-16 trace](docs/evidence/T-16_execution_trace_lane4_local.txt) |
-| `test,singularity`  | colima VM (Apptainer 1.5.3, aarch64 + Rosetta binfmt)                                          | 2 min 35 s (test profile; docker 1 min 33 s, identical h5ad — [docs/03](docs/03_cross_profile_hashes.md)) | 8.8 GB (GUIDE_COUNT)             | $0                      | T-23, re-run under T-40                                                                                             |
-| `slurm,singularity` | NEU Discovery, `sharing` partition (28-core / 186 GB node), singularity-ce 3.10.3              | 28 min 9 s (kb count 21 min 11 s on 6 CPUs)                                                               | 35.7 GB (KALLISTOBUSTOOLS_COUNT) | $0 (university cluster) | T-30, h5ad identical to local — [docs/03](docs/03_cross_profile_hashes.md), [runbook](docs/06_discovery_runbook.md) |
-| `awsbatch,docker`   | waived — not executed ([010](docs/decisions/010-aws-waiver.md)); profile kept, untested on AWS | —                                                                                                         | —                                | $0                      | T-31                                                                                                                |
+| profile                                        | host                                                                                           | wall time                                                                                                 | peak memory (process)                                   | cost                    | notes                                                                                                               |
+| ---------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `local,docker`                                 | MacBook M5 Pro 24 GB, colima 8 CPU / 20 GB, Rosetta                                            | 2 h 23 min (≈ 50 min without an operator-interrupted FastQC attempt)                                      | 15.9 GB (KALLISTOBUSTOOLS_COUNT)                        | $0                      | [docs/01](docs/01_guide_assignment_validation.md), [T-16 trace](docs/evidence/T-16_execution_trace_lane4_local.txt) |
+| `test,singularity`                             | colima VM (Apptainer 1.5.3, aarch64 + Rosetta binfmt)                                          | 2 min 35 s (test profile; docker 1 min 33 s, identical h5ad — [docs/03](docs/03_cross_profile_hashes.md)) | 8.8 GB (GUIDE_COUNT)                                    | $0                      | T-23, re-run under T-40                                                                                             |
+| `slurm,singularity`                            | NEU Discovery, `sharing` partition (28-core / 186 GB node), singularity-ce 3.10.3              | 28 min 9 s (kb count 21 min 11 s on 6 CPUs)                                                               | 35.7 GB (KALLISTOBUSTOOLS_COUNT)                        | $0 (university cluster) | T-30, h5ad identical to local — [docs/03](docs/03_cross_profile_hashes.md), [runbook](docs/06_discovery_runbook.md) |
+| `awsbatch,docker`                              | waived — not executed ([010](docs/decisions/010-aws-waiver.md)); profile kept, untested on AWS | —                                                                                                         | —                                                       | $0                      | T-31                                                                                                                |
+| `slurm,singularity`, 12 lanes + `--pool_alive` | NEU Discovery `sharing`, 12 samples in parallel (≤ 27 concurrent jobs)                         | 1 h 52 min (60.2 CPU h; kb count ≤ 55 min per lane)                                                       | 36.2 GB (KALLISTOBUSTOOLS_COUNT), 10.1 GB (pooled h5ad) | $0                      | T-14c, [docs/07](docs/07_alive_baseline.md)                                                                         |
 
 Per-process realtime and RSS for the local run are in the T-16 validation document.
 
@@ -135,6 +138,7 @@ Per-process realtime and RSS for the local run are in the T-16 validation docume
 - Explanation-check questions from every PR, with reference answers: [`docs/04_explanation_checks.md`](docs/04_explanation_checks.md).
 - One-line summary with a claim → evidence table: [`docs/05_resume_line.md`](docs/05_resume_line.md).
 - SLURM (Discovery) runbook for the full-sample run: [`docs/06_discovery_runbook.md`](docs/06_discovery_runbook.md).
+- ALIVE consumes the pooled h5ad unchanged (prepare + fit on 12 GEM groups): [`docs/07_alive_baseline.md`](docs/07_alive_baseline.md).
 - Validation against the authors' guide identities: [`docs/01_guide_assignment_validation.md`](docs/01_guide_assignment_validation.md).
 - Unit tests: `nf-test test .` (module tests under `modules/local/*/tests`, pipeline test in `tests/`).
 
