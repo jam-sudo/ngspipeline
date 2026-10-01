@@ -12,9 +12,7 @@
 
 ## Introduction
 
-[![Status: v1.0](https://img.shields.io/badge/status-v1.0-brightgreen)](docs/progress.md)
-
-**Status: v1.0** — every project completion condition F1–F13 in [`docs/progress.md`](docs/progress.md) is met with evidence (AWS Batch execution waived by [decision 010](docs/decisions/010-aws-waiver.md); release 1.0.0 on `master`, development continues on `dev`). Every claim in this README maps to a row there.
+**Release: 1.0.0** on `master`; development continues on `dev`.
 
 **jam-sudo/ngspipeline** turns raw Perturb-seq reads into an analysis-ready dataset for [ALIVE](https://github.com/jam-sudo/alive): FASTQ → gene-expression (GEX) and sgRNA count matrices → per-cell guide assignment → an ALIVE-ready `.h5ad`. It is a Nextflow DSL2 pipeline built on the nf-core template and nf-core modules; the four steps that have no nf-core module are hand-written local modules.
 
@@ -44,16 +42,31 @@ flowchart LR
 ```
 
 1. Read QC of both libraries ([`FastQC`](https://www.bioinformatics.babraham.ac.uk/projects/fastqc/)).
-2. GEX quantification with [kallisto|bustools](https://www.kallistobus.tools/) (`kb ref` on `--fasta`/`--gtf`, or a prebuilt `--reference_index`; `kb count --filter bustools` for empty-droplet removal). Native kb output is kept as-is ([decision 002](docs/decisions/002-quantifier.md)).
-3. Guide counting with the kb **kite** workflow: protospacers indexed with Hamming-1 variants, `kite:10xFB` translates the 10x 3' v3 feature-barcode variant to the GEX barcode ([005](docs/decisions/005-guide-count-method.md)).
+2. GEX quantification with [kallisto|bustools](https://www.kallistobus.tools/) (`kb ref` on `--fasta`/`--gtf`, or a prebuilt `--reference_index`; `kb count --filter bustools` for empty-droplet removal). Native kb output is kept as-is.
+3. Guide counting with the kb **kite** workflow: protospacers indexed with Hamming-1 variants, `kite:10xFB` translates the 10x 3' v3 feature-barcode variant to the GEX barcode.
 4. Per-cell guide (vector) assignment, `--assign_method threshold` or `mixture` (Poisson/Gaussian on log2 UMI, Replogle et al.), with every evidence column in `assignment.tsv`.
-5. `alive/<sample>.h5ad`: raw counts + assignment; non-single cells excluded by default ([006](docs/decisions/006-nonsingle-cells.md), schema in [`docs/alive_schema.md`](docs/alive_schema.md)).
+5. `alive/<sample>.h5ad`: raw counts + assignment; non-single cells excluded by default (schema in [`docs/alive_schema.md`](docs/alive_schema.md)).
 6. One [MultiQC](https://multiqc.info/) report with FastQC, quantification statistics and the guide-assignment section.
 
 ## Usage
 
-> [!NOTE]
-> If you are new to Nextflow and nf-core, please refer to [this page](https://nf-co.re/docs/get_started/environment_setup) on how to set-up Nextflow. Make sure to [test your setup](https://nf-co.re/docs/get_started/introduction#check-your-nextflow-installation) with `-profile test` before running the workflow on actual data.
+### Setup and first run
+
+Use Nextflow **25.10.4 or newer** and a working Docker or Singularity runtime. The bundled test profile caps each task at 4 CPUs and 10 GB RAM. GEX and guide counting can run concurrently, so allow memory for both tasks. For the development MacBook E2E run, use Colima with 8 CPUs, 20 GB RAM and Rosetta:
+
+```bash
+colima start --cpu 8 --memory 20 --vz-rosetta
+docker info
+```
+
+Run the released pipeline on the bundled real-read test data before using your own inputs:
+
+```bash
+NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.0 \
+  -profile test,docker --outdir results/test
+```
+
+On Apple Silicon, add `emulate_amd64` to the profiles (`test,docker,emulate_amd64`) to explicitly select the amd64 containers. For a local checkout, replace `jam-sudo/ngspipeline -r 1.0.0` with `.`; this runs the checked-out code, including development changes. Keep the work directory under your home directory when using Colima so containers can access it.
 
 ### Inputs
 
@@ -67,14 +80,16 @@ sampleA,run2_gex_R1.fastq.gz,run2_gex_R2.fastq.gz,,,3681
 
 `guide_library.csv` — one row per sgRNA: `guide_id,target_gene,protospacer[,vector_id]`. `vector_id` groups the sgRNAs of one vector (dual-guide libraries); non-targeting controls have `target_gene` = `non-targeting`.
 
-Reference: `--fasta` + `--gtf` (the pipeline builds the kb index) or `--reference_index <dir>` containing `*.idx` and `t2g.txt` (see `bin/build_reference_index.sh` and [002](docs/decisions/002-quantifier.md) for why a prebuilt index is used for the full human reference on small machines).
+Every sample needs paired GEX reads and at least one guide-read pair across its rows. Supply both guide paths together or leave both blank. `expected_cells` must be a positive integer and agree across rows of the same sample. FASTQ paths and sample IDs cannot contain spaces. Example inputs: [`assets/samplesheet_test.csv`](assets/samplesheet_test.csv), [`assets/guide_library_test.csv`](assets/guide_library_test.csv).
 
-`--chemistry` (`10XV2` | `10XV3`) selects the 10x whitelist and read layout and must be set from the dataset's protocol ([001](docs/decisions/001-dataset.md)). `--min_umi` (default 10) and `--min_ratio` (default 3) come from [009](docs/decisions/009-assignment-thresholds.md); override them with `-params-file` (see the note below).
+Reference: `--fasta` + `--gtf` (the pipeline builds the kb index) or `--reference_index <dir>` containing `*.idx` and `t2g.txt` (build a prebuilt cDNA index with `bin/build_reference_index.sh`; use it for the full human reference on small machines).
+
+`--chemistry` (`10XV2` | `10XV3`) selects the 10x whitelist and read layout and must be set from the dataset's protocol. `--min_umi` defaults to 10 and `--min_ratio` to 3; override them with `-params-file` (see the note below).
 
 ### Run
 
 ```bash
-nextflow run jam-sudo/ngspipeline -profile <docker/singularity/...>,local \
+NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.0 -profile docker,local \
    --input samplesheet.csv --guides guide_library.csv \
    --reference_index /path/to/kb_index --chemistry 10XV3 \
    -params-file assign_params.yml \
@@ -95,21 +110,24 @@ min_ratio: 3
 > [!WARNING]
 > Please provide pipeline parameters via the CLI or Nextflow `-params-file` option. Custom config files including those provided by the `-c` Nextflow option can be used to provide any configuration _**except for parameters**_; see [docs](https://nf-co.re/docs/usage/getting_started/configuration#custom-configuration-files).
 
-Test profile (18 MB subsample of a real Perturb-seq sample, see [`assets/test_data/README.md`](assets/test_data/README.md) and [008](docs/decisions/008-test-data-design.md)):
+Test profile (18 MB subsample of a real Perturb-seq sample, see [`assets/test_data/README.md`](assets/test_data/README.md)). From the repository root:
 
 ```bash
-nextflow run . -profile test,docker --outdir results
+NXF_VER=25.10.4 nextflow run . -profile test,docker --outdir results/test
 ```
+
+This executes FASTQ QC, both reference builds, GEX and guide counting, guide assignment, h5ad export and MultiQC. The test profile uses `min_umi: 5`, `min_ratio: 3`; production defaults are `min_umi: 10`, `min_ratio: 3`. Add `-resume` when restarting an interrupted run with the same work directory.
 
 ### Outputs (`--outdir`)
 
 ```
+fastqc/                              read QC reports for both libraries
 counts/<sample>/                      kb count native output (counts_unfiltered/, counts_filtered/, *.bus, run_info.json, ...)
 guides/<sample>/guide_counts.h5ad     cells x guides (all barcodes; kite)
 guides/<sample>/assignment.tsv        cell_barcode, guide_id, target_gene, method, top1_umi, top2_umi, ratio, posterior, status{single,multi,unassigned}, ...
 guides/<sample>/assignment_summary.tsv
 alive/<sample>.h5ad                   counts + assignment (obs: cell_barcode, gene, guide_id, target_gene, assignment_status, assignment_confidence, assignment_method, ...)
-alive/pooled.h5ad                     with --pool_alive and > 1 sample: all samples, obs index <barcode>-<sample_id> (docs/decisions/011)
+alive/pooled.h5ad                     with --pool_alive and > 1 sample: all samples, obs index <barcode>-<sample_id>
 alive/<id>.alive_summary.json         cells, labels, status counts per h5ad
 reference/{kb_index,guide_index}/     indices built in-pipeline
 multiqc/multiqc_report.html
@@ -118,33 +136,46 @@ pipeline_info/{execution_report,execution_timeline,execution_trace,pipeline_dag}
 
 ## Run statistics
 
-Sample: Replogle 2022 K562 essential-scale, GEM group `lane_4` (235 M GEX read pairs, 19.7 M guide read pairs; [001](docs/decisions/001-dataset.md)), prebuilt cDNA index, `--assign_method threshold`.
+Sample: Replogle 2022 K562 essential-scale, GEM group `lane_4` (235 M GEX read pairs, 19.7 M guide read pairs), prebuilt cDNA index, `--assign_method threshold`.
 
-| profile                                        | host                                                                                           | wall time                                                                                                 | peak memory (process)                                   | cost                    | notes                                                                                                               |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| `local,docker`                                 | MacBook M5 Pro 24 GB, colima 8 CPU / 20 GB, Rosetta                                            | 2 h 23 min (≈ 50 min without an operator-interrupted FastQC attempt)                                      | 15.9 GB (KALLISTOBUSTOOLS_COUNT)                        | $0                      | [docs/01](docs/01_guide_assignment_validation.md), [T-16 trace](docs/evidence/T-16_execution_trace_lane4_local.txt) |
-| `test,singularity`                             | colima VM (Apptainer 1.5.3, aarch64 + Rosetta binfmt)                                          | 2 min 35 s (test profile; docker 1 min 33 s, identical h5ad — [docs/03](docs/03_cross_profile_hashes.md)) | 8.8 GB (GUIDE_COUNT)                                    | $0                      | T-23, re-run under T-40                                                                                             |
-| `slurm,singularity`                            | NEU Discovery, `sharing` partition (28-core / 186 GB node), singularity-ce 3.10.3              | 28 min 9 s (kb count 21 min 11 s on 6 CPUs)                                                               | 35.7 GB (KALLISTOBUSTOOLS_COUNT)                        | $0 (university cluster) | T-30, h5ad identical to local — [docs/03](docs/03_cross_profile_hashes.md), [runbook](docs/06_discovery_runbook.md) |
-| `awsbatch,docker`                              | waived — not executed ([010](docs/decisions/010-aws-waiver.md)); profile kept, untested on AWS | —                                                                                                         | —                                                       | $0                      | T-31                                                                                                                |
-| `slurm,singularity`, 12 lanes + `--pool_alive` | NEU Discovery `sharing`, 12 samples in parallel (≤ 27 concurrent jobs)                         | 1 h 52 min (60.2 CPU h; kb count ≤ 55 min per lane)                                                       | 36.2 GB (KALLISTOBUSTOOLS_COUNT), 10.1 GB (pooled h5ad) | $0                      | T-14c, [docs/07](docs/07_alive_baseline.md)                                                                         |
-
-Per-process realtime and RSS for the local run are in the T-16 validation document.
+| profile                                        | host                                                | wall time                                                            | peak memory (process)                                   | notes                                               |
+| ---------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------- |
+| `local,docker`                                 | MacBook M5 Pro 24 GB, Colima 8 CPU / 20 GB, Rosetta | 2 h 23 min (≈ 50 min without an operator-interrupted FastQC attempt) | 15.9 GB (KALLISTOBUSTOOLS_COUNT)                        | Full lane_4                                         |
+| `test,singularity`                             | Colima VM, Apptainer 1.5.3, aarch64 + Rosetta       | 2 min 35 s (Docker: 1 min 33 s)                                      | 8.8 GB (GUIDE_COUNT)                                    | Identical h5ad across test profiles                 |
+| `slurm,singularity`                            | NEU Discovery, `sharing`, 28-core / 186 GB node     | 28 min 9 s                                                           | 35.7 GB (KALLISTOBUSTOOLS_COUNT)                        | Full lane_4; h5ad identical to local                |
+| `awsbatch,docker`                              | Not executed                                        | —                                                                    | —                                                       | Profile available; untested on AWS                  |
+| `slurm,singularity`, 12 lanes + `--pool_alive` | NEU Discovery `sharing`, 12 samples in parallel     | 1 h 52 min                                                           | 36.2 GB (KALLISTOBUSTOOLS_COUNT), 10.1 GB (pooled h5ad) | 104,551 pooled cells; ALIVE prepare + fit completed |
 
 ## Development
 
-- Tasks, Definitions of Done and evidence: [`PLAN.md`](PLAN.md), [`docs/progress.md`](docs/progress.md).
-- Decision records (dataset, quantifier, dev host, naming, guide counting, non-single cells, test data, assignment thresholds): [`docs/decisions/`](docs/decisions/README.md).
-- Reproducibility checks: [`docs/02_resume_check.md`](docs/02_resume_check.md) (`-resume`), [`docs/03_cross_profile_hashes.md`](docs/03_cross_profile_hashes.md) (h5ad sha256 per profile).
-- Explanation-check questions from every PR, with reference answers: [`docs/04_explanation_checks.md`](docs/04_explanation_checks.md).
-- One-line summary with a claim → evidence table: [`docs/05_resume_line.md`](docs/05_resume_line.md).
-- SLURM (Discovery) runbook for the full-sample run: [`docs/06_discovery_runbook.md`](docs/06_discovery_runbook.md).
-- ALIVE consumes the pooled h5ad unchanged (prepare + fit on 12 GEM groups): [`docs/07_alive_baseline.md`](docs/07_alive_baseline.md).
-- Validation against the authors' guide identities: [`docs/01_guide_assignment_validation.md`](docs/01_guide_assignment_validation.md).
-- Unit tests: `nf-test test .` (module tests under `modules/local/*/tests`, pipeline test in `tests/`).
+### End-to-end validation
+
+From the repository root, run the existing pipeline test with nf-test (CI pins nf-test 0.9.4). Use a fresh `NFT_WORKDIR` for a new execution; `--ci` prevents creating missing snapshots silently:
+
+```bash
+NXF_VER=25.10.4 NFT_WORKDIR=testing/e2e/nf-test \
+  nf-test test tests/default.nf.test --profile test,docker --ci
+```
+
+On Apple Silicon use `--profile test,docker,emulate_amd64`. The test requires workflow success, 96–120 filtered GEX cells, 200 genes, 108 guide features, guide and ALIVE h5ad outputs, and matching snapshots of stable output paths and contents. It covers the single-sample threshold-assignment path with an in-pipeline reference build; pooled export and other assignment modes are covered separately by the local module tests.
+
+Validate the final ALIVE schema using the existing checker (requires the Python environment with `anndata`, `numpy` and `scipy`):
+
+```bash
+python bin/check_alive_schema.py results/test/alive/replogle_k562_lane4_test.h5ad
+```
+
+Run all repository-owned tests, including the pipeline and local module tests:
+
+```bash
+NXF_VER=25.10.4 nf-test test . --profile test,docker --ci
+```
+
+Module tests live under `modules/local/*/tests`; the end-to-end pipeline test lives in `tests/`.
 
 ## Credits
 
-jam-sudo/ngspipeline was written by Jae Min Yoon with Claude Code as the implementing agent; every task is reviewed and its Definition of Done executed by the human ([`CLAUDE.md`](CLAUDE.md)).
+jam-sudo/ngspipeline was written by Jae Min Yoon.
 
 ## Citations
 

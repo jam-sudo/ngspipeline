@@ -18,3 +18,18 @@ null/
 .agents/
 .claude/skills/
 skills-lock.json
+
+# Local planning, agent instructions and validation records
+/PLAN.md
+/CLAUDE.md
+/AGENTS.md
+/docs/**
+
+# Public user documentation
+!/docs/README.md
+!/docs/CONTRIBUTING.md
+!/docs/usage.md
+!/docs/output.md
+!/docs/alive_schema.md
+!/docs/images/
+!/docs/images/**
