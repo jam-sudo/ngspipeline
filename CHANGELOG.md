@@ -3,6 +3,14 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.2 - [2026-10-07]
+
+Documentation patch; no change to pipeline code, parameters or outputs.
+
+### `Changed`
+
+- README, CHANGELOG and the `conf/slurm.config` header describe the SLURM test host generically instead of naming the cluster and partition; the CHANGELOG v1.0.0 entry no longer links to an untracked runbook.
+
 ## v1.0.1 - [2026-10-06]
 
 Documentation and repository-hygiene patch; no change to pipeline code, parameters or outputs.
@@ -28,7 +36,7 @@ First release. Perturb-seq raw reads → GEX and sgRNA count matrices → per-ce
 - ALIVE-ready `alive/<sample>.h5ad` (single-assignment cells, `obs['gene']`, raw counts) — decisions 006, schema in `docs/alive_schema.md`; `--pool_alive` writes `alive/pooled.h5ad` across GEM groups with obs index `<barcode>-<sample_id>` — decision 011.
 - MultiQC report with FastQC, kb quantification and guide-assignment sections.
 - 18 MB deterministic test data subsampled from Replogle 2022 lane_4 (`-profile test` < 2 min) — decision 008; nf-test module and pipeline tests.
-- Profiles `local`, `slurm` (run on NEU Discovery, `docs/06_discovery_runbook.md`), `awsbatch` (configuration only, execution waived — decision 010); Docker and Singularity/Apptainer.
+- Profiles `local`, `slurm` (tested on a SLURM cluster), `awsbatch` (configuration only, execution waived — decision 010); Docker and Singularity/Apptainer.
 - Validation against the authors' guide identities: 96.0 % per-cell concordance on lane_4 and 95.3–96.3 % on 12 GEM groups without threshold tuning (`docs/01`); `-resume` check (`docs/02`); byte-identical h5ad across engines and schedulers (`docs/03`); ALIVE `prepare` + `fit` on the pooled h5ad with zero loader changes (`docs/07`).
 
 ### `Fixed`

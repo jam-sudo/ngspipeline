@@ -12,7 +12,7 @@
 
 ## Introduction
 
-**Latest release: tag [`1.0.1`](https://github.com/jam-sudo/ngspipeline/releases/tag/1.0.1)** (run it with `-r 1.0.1`); development continues on `dev`.
+**Latest release: tag [`1.0.2`](https://github.com/jam-sudo/ngspipeline/releases/tag/1.0.2)** (run it with `-r 1.0.2`); development continues on `dev`.
 
 **jam-sudo/ngspipeline** turns raw Perturb-seq reads into an analysis-ready dataset for [ALIVE](https://github.com/jam-sudo/alive): FASTQ → gene-expression (GEX) and sgRNA count matrices → per-cell guide assignment → an ALIVE-ready `.h5ad`. It is a Nextflow DSL2 pipeline built on the nf-core template and nf-core modules; the four steps that have no nf-core module are hand-written local modules.
 
@@ -62,11 +62,11 @@ docker info
 Run the released pipeline on the bundled real-read test data before using your own inputs:
 
 ```bash
-NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.1 \
+NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.2 \
   -profile test,docker --outdir results/test
 ```
 
-On Apple Silicon, add `emulate_amd64` to the profiles (`test,docker,emulate_amd64`) to explicitly select the amd64 containers. For a local checkout, replace `jam-sudo/ngspipeline -r 1.0.1` with `.`; this runs the checked-out code, including development changes. Keep the work directory under your home directory when using Colima so containers can access it.
+On Apple Silicon, add `emulate_amd64` to the profiles (`test,docker,emulate_amd64`) to explicitly select the amd64 containers. For a local checkout, replace `jam-sudo/ngspipeline -r 1.0.2` with `.`; this runs the checked-out code, including development changes. Keep the work directory under your home directory when using Colima so containers can access it.
 
 ### Inputs
 
@@ -89,7 +89,7 @@ Reference: `--fasta` + `--gtf` (the pipeline builds the kb index) or `--referenc
 ### Run
 
 ```bash
-NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.1 -profile docker,local \
+NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.2 -profile docker,local \
    --input samplesheet.csv --guides guide_library.csv \
    --reference_index /path/to/kb_index --chemistry 10XV3 \
    -params-file assign_params.yml \
@@ -142,9 +142,9 @@ Sample: Replogle 2022 K562 essential-scale, GEM group `lane_4` (235 M GEX read p
 | ---------------------------------------------- | --------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------- | --------------------------------------------------- |
 | `local,docker`                                 | MacBook M5 Pro 24 GB, Colima 8 CPU / 20 GB, Rosetta | 2 h 23 min (≈ 50 min without an operator-interrupted FastQC attempt) | 15.9 GB (KALLISTOBUSTOOLS_COUNT)                        | Full lane_4                                         |
 | `test,singularity`                             | Colima VM, Apptainer 1.5.3, aarch64 + Rosetta       | 2 min 35 s (Docker: 1 min 33 s)                                      | 8.8 GB (GUIDE_COUNT)                                    | Identical h5ad across test profiles                 |
-| `slurm,singularity`                            | NEU Discovery, `sharing`, 28-core / 186 GB node     | 28 min 9 s                                                           | 35.7 GB (KALLISTOBUSTOOLS_COUNT)                        | Full lane_4; h5ad identical to local                |
+| `slurm,singularity`                            | SLURM cluster, 28-core / 186 GB node                | 28 min 9 s                                                           | 35.7 GB (KALLISTOBUSTOOLS_COUNT)                        | Full lane_4; h5ad identical to local                |
 | `awsbatch,docker`                              | Not executed                                        | —                                                                    | —                                                       | Profile available; untested on AWS                  |
-| `slurm,singularity`, 12 lanes + `--pool_alive` | NEU Discovery `sharing`, 12 samples in parallel     | 1 h 52 min                                                           | 36.2 GB (KALLISTOBUSTOOLS_COUNT), 10.1 GB (pooled h5ad) | 104,551 pooled cells; ALIVE prepare + fit completed |
+| `slurm,singularity`, 12 lanes + `--pool_alive` | SLURM cluster, 12 samples in parallel               | 1 h 52 min                                                           | 36.2 GB (KALLISTOBUSTOOLS_COUNT), 10.1 GB (pooled h5ad) | 104,551 pooled cells; ALIVE prepare + fit completed |
 
 ## Development
 
