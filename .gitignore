@@ -10,19 +10,22 @@ null/
 .lineage/
 .nf-test.log
 .nf-test/
-.playwright-mcp/
 !tests/data/
 !tests/data/**
 
-# third-party agent skills installed by `npx skills add` (2026-09-16), not part of the pipeline
+# AI agent files (Claude Code, Codex/GPT): instructions, settings, skills; kept local
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+.codex/
+AGENTS.md
 .agents/
-.claude/skills/
 skills-lock.json
+.mcp.json
+.playwright-mcp/
 
-# Local planning, agent instructions and validation records
+# Local planning and validation records
 /PLAN.md
-/CLAUDE.md
-/AGENTS.md
 /docs/**
 
 # Public user documentation
