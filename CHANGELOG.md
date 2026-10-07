@@ -3,15 +3,13 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## v1.1.0dev - [unreleased]
+## v1.0.2 - [2026-10-07]
 
-### `Added`
+Documentation patch; no change to pipeline code, parameters or outputs.
 
-### `Fixed`
+### `Changed`
 
-### `Dependencies`
-
-### `Deprecated`
+- README, CHANGELOG and the `conf/slurm.config` header describe the SLURM test host generically instead of naming the cluster and partition; the CHANGELOG v1.0.0 entry no longer links to an untracked runbook.
 
 ## v1.0.1 - [2026-10-06]
 
