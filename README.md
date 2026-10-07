@@ -12,7 +12,7 @@
 
 ## Introduction
 
-**Release: 1.0.0** on `master`; development continues on `dev`.
+**Latest release: tag [`1.0.0`](https://github.com/jam-sudo/ngspipeline/releases/tag/1.0.0)** (run it with `-r 1.0.0`); development continues on `dev`.
 
 **jam-sudo/ngspipeline** turns raw Perturb-seq reads into an analysis-ready dataset for [ALIVE](https://github.com/jam-sudo/alive): FASTQ → gene-expression (GEX) and sgRNA count matrices → per-cell guide assignment → an ALIVE-ready `.h5ad`. It is a Nextflow DSL2 pipeline built on the nf-core template and nf-core modules; the four steps that have no nf-core module are hand-written local modules.
 
