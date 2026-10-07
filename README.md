@@ -12,7 +12,7 @@
 
 ## Introduction
 
-**Latest release: tag [`1.0.0`](https://github.com/jam-sudo/ngspipeline/releases/tag/1.0.0)** (run it with `-r 1.0.0`); development continues on `dev`.
+**Latest release: tag [`1.0.1`](https://github.com/jam-sudo/ngspipeline/releases/tag/1.0.1)** (run it with `-r 1.0.1`); development continues on `dev`.
 
 **jam-sudo/ngspipeline** turns raw Perturb-seq reads into an analysis-ready dataset for [ALIVE](https://github.com/jam-sudo/alive): FASTQ → gene-expression (GEX) and sgRNA count matrices → per-cell guide assignment → an ALIVE-ready `.h5ad`. It is a Nextflow DSL2 pipeline built on the nf-core template and nf-core modules; the four steps that have no nf-core module are hand-written local modules.
 
@@ -62,11 +62,11 @@ docker info
 Run the released pipeline on the bundled real-read test data before using your own inputs:
 
 ```bash
-NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.0 \
+NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.1 \
   -profile test,docker --outdir results/test
 ```
 
-On Apple Silicon, add `emulate_amd64` to the profiles (`test,docker,emulate_amd64`) to explicitly select the amd64 containers. For a local checkout, replace `jam-sudo/ngspipeline -r 1.0.0` with `.`; this runs the checked-out code, including development changes. Keep the work directory under your home directory when using Colima so containers can access it.
+On Apple Silicon, add `emulate_amd64` to the profiles (`test,docker,emulate_amd64`) to explicitly select the amd64 containers. For a local checkout, replace `jam-sudo/ngspipeline -r 1.0.1` with `.`; this runs the checked-out code, including development changes. Keep the work directory under your home directory when using Colima so containers can access it.
 
 ### Inputs
 
@@ -89,7 +89,7 @@ Reference: `--fasta` + `--gtf` (the pipeline builds the kb index) or `--referenc
 ### Run
 
 ```bash
-NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.0 -profile docker,local \
+NXF_VER=25.10.4 nextflow run jam-sudo/ngspipeline -r 1.0.1 -profile docker,local \
    --input samplesheet.csv --guides guide_library.csv \
    --reference_index /path/to/kb_index --chemistry 10XV3 \
    -params-file assign_params.yml \
