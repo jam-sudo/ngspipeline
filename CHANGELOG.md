@@ -38,7 +38,7 @@ First release. Perturb-seq raw reads → GEX and sgRNA count matrices → per-ce
 - ALIVE-ready `alive/<sample>.h5ad` (single-assignment cells, `obs['gene']`, raw counts) — decisions 006, schema in `docs/alive_schema.md`; `--pool_alive` writes `alive/pooled.h5ad` across GEM groups with obs index `<barcode>-<sample_id>` — decision 011.
 - MultiQC report with FastQC, kb quantification and guide-assignment sections.
 - 18 MB deterministic test data subsampled from Replogle 2022 lane_4 (`-profile test` < 2 min) — decision 008; nf-test module and pipeline tests.
-- Profiles `local`, `slurm` (run on NEU Discovery, `docs/06_discovery_runbook.md`), `awsbatch` (configuration only, execution waived — decision 010); Docker and Singularity/Apptainer.
+- Profiles `local`, `slurm` (tested on a SLURM cluster), `awsbatch` (configuration only, execution waived — decision 010); Docker and Singularity/Apptainer.
 - Validation against the authors' guide identities: 96.0 % per-cell concordance on lane_4 and 95.3–96.3 % on 12 GEM groups without threshold tuning (`docs/01`); `-resume` check (`docs/02`); byte-identical h5ad across engines and schedulers (`docs/03`); ALIVE `prepare` + `fit` on the pooled h5ad with zero loader changes (`docs/07`).
 
 ### `Fixed`
