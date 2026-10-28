@@ -174,6 +174,8 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `test`
   - A profile with a complete configuration for automated testing
   - Includes links to test data so needs no other parameters
+- `test_full`
+  - Settings of the full-size validation run (`10XV3`, threshold `min_umi 5`, `min_ratio 3`); supply `--input`, `--guides` and `--reference_index`
 - `local`
   - Local executor capped at 8 CPUs and 16 GB, with per-process sizes that let QC and both counting steps run side by side
 - `slurm`
