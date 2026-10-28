@@ -1,64 +1,89 @@
 # jam-sudo/ngspipeline: Usage
 
-> _Documentation of pipeline parameters is generated automatically from the pipeline schema and can no longer be found in markdown files._
+> _Documentation of pipeline parameters is generated automatically from the pipeline schema; run `nextflow run jam-sudo/ngspipeline -r <version> --help` (or `--help_full`) to list them._
 
 ## Introduction
 
-<!-- TODO nf-core: Add documentation about anything specific to running your pipeline. For general topics, please point to (and add to) the main nf-core website. -->
+The pipeline takes 10x Genomics 3' Perturb-seq samples, each with a gene-expression (GEX) library and an sgRNA feature-barcode (guide) library, and writes count matrices, per-cell guide assignments and one ALIVE-ready `.h5ad` per sample. A run needs four inputs:
+
+- `--input`: a samplesheet listing the FASTQ files of every sample ([below](#samplesheet-input))
+- `--guides`: the guide library ([below](#guide-library))
+- a reference: `--fasta` + `--gtf`, or a prebuilt `--reference_index` ([below](#reference))
+- `--chemistry`: `10XV2` or `10XV3`, taken from the dataset's protocol
 
 ## Samplesheet input
 
-You will need to create a samplesheet with information about the samples you would like to analyse before running the pipeline. Use this parameter to specify its location. It has to be a comma-separated file with 3 columns, and a header row as shown in the examples below.
+Pass a comma-separated file with a header row and these six columns:
 
 ```bash
 --input '[path to samplesheet file]'
 ```
 
+| Column           | Required            | Description                                                                                         |
+| ---------------- | ------------------- | --------------------------------------------------------------------------------------------------- |
+| `sample_id`      | yes                 | Sample name without spaces. Rows with the same `sample_id` are merged into one sample.              |
+| `gex_r1`         | yes                 | GEX library read 1 (cell barcode + UMI), `.fastq.gz` or `.fq.gz`.                                   |
+| `gex_r2`         | yes                 | GEX library read 2 (cDNA).                                                                          |
+| `guide_r1`       | on at least one row | Guide library read 1 (cell barcode + UMI).                                                          |
+| `guide_r2`       | on at least one row | Guide library read 2 (protospacer read).                                                            |
+| `expected_cells` | yes                 | Positive integer, identical on every row of a sample. Used only to report the called-cell fraction. |
+
+Rules checked at start-up:
+
+- Every sample needs at least one guide-read pair across its rows. Give `guide_r1` and `guide_r2` together or leave both blank.
+- File paths and sample IDs cannot contain spaces. Relative paths are resolved against the samplesheet's directory.
+
 ### Multiple runs of the same sample
 
-The `sample` identifiers have to be the same when you have re-sequenced the same sample more than once e.g. to increase sequencing depth. The pipeline will concatenate the raw reads before performing any downstream analysis. Below is an example for the same sample sequenced across 3 lanes:
+Give one row per sequencing run with the same `sample_id`. GEX pairs are taken from every row and guide pairs from the rows that carry them; the runs are counted together. Example with two GEX runs and one guide run:
 
 ```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L003_R1_001.fastq.gz,AEG588A1_S1_L003_R2_001.fastq.gz
-CONTROL_REP1,AEG588A1_S1_L004_R1_001.fastq.gz,AEG588A1_S1_L004_R2_001.fastq.gz
+sample_id,gex_r1,gex_r2,guide_r1,guide_r2,expected_cells
+sampleA,run1_gex_R1.fastq.gz,run1_gex_R2.fastq.gz,run1_guide_R1.fastq.gz,run1_guide_R2.fastq.gz,5000
+sampleA,run2_gex_R1.fastq.gz,run2_gex_R2.fastq.gz,,,5000
 ```
 
-### Full samplesheet
+Each `sample_id` is processed as its own sample (one GEM group). To also write one h5ad that contains every sample, add `pool_alive: true` to a `-params-file`; all samples must share the same reference.
 
-The pipeline will auto-detect whether a sample is single- or paired-end using the information provided in the samplesheet. The samplesheet can have as many columns as you desire, however, there is a strict requirement for the first 3 columns to match those defined in the table below.
+An [example samplesheet](../assets/samplesheet.csv) and the [test samplesheet](../assets/samplesheet_test.csv) are provided with the pipeline.
 
-A final samplesheet file consisting of both single- and paired-end data may look something like the one below. This is for 6 samples, where `TREATMENT_REP3` has been sequenced twice.
+## Guide library
 
-```csv title="samplesheet.csv"
-sample,fastq_1,fastq_2
-CONTROL_REP1,AEG588A1_S1_L002_R1_001.fastq.gz,AEG588A1_S1_L002_R2_001.fastq.gz
-CONTROL_REP2,AEG588A2_S2_L002_R1_001.fastq.gz,AEG588A2_S2_L002_R2_001.fastq.gz
-CONTROL_REP3,AEG588A3_S3_L002_R1_001.fastq.gz,AEG588A3_S3_L002_R2_001.fastq.gz
-TREATMENT_REP1,AEG588A4_S4_L003_R1_001.fastq.gz,
-TREATMENT_REP2,AEG588A5_S5_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L003_R1_001.fastq.gz,
-TREATMENT_REP3,AEG588A6_S6_L004_R1_001.fastq.gz,
+`--guides` is a CSV with one row per sgRNA:
+
+```csv title="guide_library.csv"
+guide_id,target_gene,protospacer,vector_id
+GENE1_sgA,GENE1,ACGTACGTACGTACGTACGT,GENE1_v1
+GENE1_sgB,GENE1,TGCATGCATGCATGCATGCA,GENE1_v1
+NT_0001,non-targeting,GATTACAGATTACAGATTAC,NT_0001
 ```
 
-| Column    | Description                                                                                                                                                                            |
-| --------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `sample`  | Custom sample name. This entry will be identical for multiple sequencing libraries/runs from the same sample. Spaces in sample names are automatically converted to underscores (`_`). |
-| `fastq_1` | Full path to FastQ file for Illumina short reads 1. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
-| `fastq_2` | Full path to FastQ file for Illumina short reads 2. File has to be gzipped and have the extension ".fastq.gz" or ".fq.gz".                                                             |
+- `protospacer` is the 20-nt targeting sequence as it appears in the guide read.
+- `vector_id` (optional) groups the sgRNAs of one vector, for example in dual-guide libraries; assignment is made per vector. Without it, each sgRNA is its own vector.
+- Non-targeting controls must have `target_gene` = `non-targeting`; this is the control label in the ALIVE h5ad.
 
-An [example samplesheet](../assets/samplesheet.csv) has been provided with the pipeline.
+## Reference
+
+Choose one:
+
+- `--fasta` + `--gtf`: the pipeline builds the kallisto index with `kb ref` (`reference/kb_index/`). Building a full human genome index needs a lot of memory.
+- `--reference_index <dir>`: a directory with a prebuilt kallisto index (`*.idx`) and `t2g.txt`. Use it for full human references on small machines. `bin/build_reference_index.sh <cdna.fa.gz> <ncrna.fa.gz> <outdir> [threads]` builds one from Ensembl cDNA and ncRNA FASTA with the same kallisto version the pipeline uses (needs Docker).
 
 ## Running the pipeline
 
 The typical command for running the pipeline is as follows:
 
 ```bash
-nextflow run jam-sudo/ngspipeline --input ./samplesheet.csv --outdir ./results  -profile docker
+nextflow run jam-sudo/ngspipeline -r <version> -profile docker \
+    --input samplesheet.csv --guides guide_library.csv \
+    --reference_index /path/to/kb_index --chemistry 10XV3 \
+    --outdir ./results
 ```
 
 This will launch the pipeline with the `docker` configuration profile. See below for more information about profiles.
+
+> [!NOTE]
+> Numeric and boolean parameters given as `--name value` on the command line (`--min_ratio 3`, `--pool_alive true`) are parsed as strings and rejected by the parameter validation. Put them in a `-params-file`, or pass a boolean as a bare flag (`--pool_alive`).
 
 Note that the pipeline will create the following files in your working directory:
 
@@ -79,18 +104,30 @@ Pipeline settings can be provided in a `yaml` or `json` file via `-params-file <
 The above pipeline run specified with a params file in yaml format:
 
 ```bash
-nextflow run jam-sudo/ngspipeline -profile docker -params-file params.yaml
+nextflow run jam-sudo/ngspipeline -r <version> -profile docker -params-file params.yaml
 ```
 
 with:
 
 ```yaml title="params.yaml"
-input: './samplesheet.csv'
-outdir: './results/'
-<...>
+input: "./samplesheet.csv"
+guides: "./guide_library.csv"
+reference_index: "/path/to/kb_index"
+chemistry: "10XV3"
+outdir: "./results/"
+assign_method: "threshold" # or "mixture"
+min_umi: 10
+min_ratio: 3
 ```
 
 You can also generate such `YAML`/`JSON` files via [nf-core/launch](https://nf-co.re/launch).
+
+### Guide assignment
+
+- `assign_method: threshold` (default): a cell is `single` when its top vector has at least `min_umi` UMIs (default 10) and at least `min_ratio` (default 3) times the UMIs of the second vector.
+- `assign_method: mixture`: a per-vector Poisson/Gaussian mixture on log2 UMI counts, as in Replogle et al. 2022; a cell is `single` when exactly one vector has posterior > 0.5. Vectors with too few cells to fit fall back to `UMI >= min_umi`.
+
+Cells that are not `single` (`multi`, `unassigned`, `no_guide_reads`) are left out of the ALIVE h5ad; `keep_nonsingle: true` keeps them for inspection with `gene` set to their status. Every barcode with guide reads is in `guides/<sample>/assignment.tsv` with its evidence columns; `no_guide_reads` marks GEX cells without any.
 
 ### Updating the pipeline
 
@@ -137,6 +174,14 @@ If `-profile` is not specified, the pipeline will run locally and expect all sof
 - `test`
   - A profile with a complete configuration for automated testing
   - Includes links to test data so needs no other parameters
+- `local`
+  - Local executor capped at 8 CPUs and 16 GB, with per-process sizes that let QC and both counting steps run side by side
+- `slurm`
+  - SLURM executor; needs `--slurm_partition` (and `--slurm_account` if the site requires one). Use with `singularity` or `apptainer`
+- `awsbatch`
+  - AWS Batch executor; needs `--aws_queue` (set `--aws_region` as well). Configuration only, not tested on AWS
+- `emulate_amd64`
+  - Runs the amd64 containers explicitly under emulation, for Docker on Apple Silicon (`-profile test,docker,emulate_amd64`)
 - `docker`
   - A generic configuration profile to be used with [Docker](https://docker.com/)
 - `singularity`
