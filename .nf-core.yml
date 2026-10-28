@@ -7,7 +7,6 @@ lint:
   included_configs: false
   files_unchanged:
     - .prettierignore
-    - .prettierignore
     - CODE_OF_CONDUCT.md
     - assets/nf-core-ngspipeline_logo_light.png
     - docs/images/nf-core-ngspipeline_logo_light.png
@@ -35,6 +34,8 @@ lint:
     - .github/ISSUE_TEMPLATE/config.yml
     - .github/workflows/awstest.yml
     - .github/workflows/awsfulltest.yml
+    # no full-size test data on a public bucket; the full sample is run by hand (README Run statistics)
+    - conf/test_full.config
 
 template:
   org: jam-sudo
