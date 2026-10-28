@@ -18,6 +18,30 @@
 
 > Ewels P, Magnusson M, Lundin S, Käller M. MultiQC: summarize analysis results for multiple tools and samples in a single report. Bioinformatics. 2016 Oct 1;32(19):3047-8. doi: 10.1093/bioinformatics/btw354. Epub 2016 Jun 16. PubMed PMID: 27312411; PubMed Central PMCID: PMC5039924.
 
+- [kallisto](https://doi.org/10.1038/nbt.3519)
+
+> Bray NL, Pimentel H, Melsted P, Pachter L. Near-optimal probabilistic RNA-seq quantification. Nat Biotechnol. 2016;34(5):525-527. doi: 10.1038/nbt.3519.
+
+- [bustools](https://doi.org/10.1038/s41587-021-00870-2)
+
+> Melsted P, Ntranos V, Pachter L. The barcode, UMI, set format and BUStools. Bioinformatics. 2019;35(21):4472-4473. doi: 10.1093/bioinformatics/btz279.
+
+> Melsted P, Booeshaghi AS, Liu L, Gao F, Lu L, Min KH, da Veiga Beltrame E, Hjörleifsson KE, Gehring J, Pachter L. Modular, efficient and constant-memory single-cell RNA-seq preprocessing. Nat Biotechnol. 2021;39(7):813-818. doi: 10.1038/s41587-021-00870-2.
+
+- [kb-python](https://doi.org/10.1038/s41596-024-01057-0) (`kb ref`, `kb count` and the kite feature-barcode workflow)
+
+> Sullivan DK, Min KH, Hjörleifsson KE, Luebbert L, Holley G, Moses L, Gustafsson J, Bray NL, Pimentel H, Booeshaghi AS, Melsted P, Pachter L. kallisto, bustools and kb-python for quantifying bulk, single-cell and single-nucleus RNA-seq. Nat Protoc. 2025;20(3):587-607. doi: 10.1038/s41596-024-01057-0.
+
+- [anndata](https://doi.org/10.21105/joss.04371)
+
+> Virshup I, Rybakov S, Theis FJ, Angerer P, Wolf FA. anndata: Access and store annotated data matrices. J Open Source Softw. 2024;9(101):4371. doi: 10.21105/joss.04371.
+
+## Guide assignment and validation data
+
+- [Replogle et al. 2022](https://doi.org/10.1016/j.cell.2022.05.013): the `mixture` assignment model follows this paper, and its K562 essential-scale data are the test and validation data.
+
+> Replogle JM, Saunders RA, Pogson AN, Hussmann JA, Lenail A, Guna A, Mascibroda L, Wagner EJ, Adelman K, Lithwick-Yanai G, Iremadze N, Oberstrass F, Lipson D, Bonnar JL, Jost M, Norman TM, Weissman JS. Mapping information-rich genotype-phenotype landscapes with genome-scale Perturb-seq. Cell. 2022;185(14):2559-2575.e28. doi: 10.1016/j.cell.2022.05.013.
+
 ## Software packaging/containerisation tools
 
 - [Anaconda](https://anaconda.com)

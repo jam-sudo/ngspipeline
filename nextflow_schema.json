@@ -41,7 +41,7 @@
                     "mimetype": "text/csv",
                     "pattern": "^\\S+\\.csv$",
                     "description": "Guide library CSV: guide_id,target_gene,protospacer[,vector_id].",
-                    "help_text": "One row per sgRNA. `protospacer` is the 20-nt targeting sequence as it appears in the guide read. `vector_id` (optional) groups sgRNAs that share a vector, e.g. dual-guide libraries (docs/decisions/008).",
+                    "help_text": "One row per sgRNA. `protospacer` is the 20-nt targeting sequence as it appears in the guide read. `vector_id` (optional) groups sgRNAs that share a vector, e.g. dual-guide libraries.",
                     "fa_icon": "fas fa-file-csv"
                 }
             }
@@ -74,13 +74,13 @@
                     "type": "string",
                     "format": "directory-path",
                     "exists": true,
-                    "description": "Directory with a prebuilt kb index (*.idx) and t2g.txt. Skips KALLISTOBUSTOOLS_REF. Use for full human references where kb ref exceeds available memory (docs/decisions/002).",
+                    "description": "Directory with a prebuilt kb index (*.idx) and t2g.txt. Skips KALLISTOBUSTOOLS_REF. Use for full human references where kb ref exceeds available memory.",
                     "fa_icon": "fas fa-folder"
                 },
                 "chemistry": {
                     "type": "string",
                     "enum": ["10XV2", "10XV3"],
-                    "description": "10x Genomics chemistry, as the kb technology string. Determines the cell-barcode whitelist and read layout. Must be set by the analyst from the dataset's protocol (docs/decisions/001).",
+                    "description": "10x Genomics chemistry, as the kb technology string. Determines the cell-barcode whitelist and read layout. Must be set by the analyst from the dataset's protocol.",
                     "fa_icon": "fas fa-vial"
                 },
                 "kb_workflow": {
@@ -110,27 +110,27 @@
                 "min_umi": {
                     "type": "number",
                     "minimum": 0,
-                    "description": "Minimum top-1 vector UMI count for a cell to be assigned (threshold method; fallback for unfittable vectors in mixture). Default 10 = above the 99th percentile of the top-1 vector UMI in empty droplets of the reference sample (docs/decisions/009).",
+                    "description": "Minimum top-1 vector UMI count for a cell to be assigned (threshold method; fallback for unfittable vectors in mixture). Default 10 = above the 99th percentile of the top-1 vector UMI in empty droplets of the reference sample.",
                     "fa_icon": "fas fa-sort-numeric-up",
                     "default": 10
                 },
                 "min_ratio": {
                     "type": "number",
                     "minimum": 1,
-                    "description": "Minimum top-1 / top-2 UMI ratio for a single assignment (threshold method). Default 3 (docs/decisions/009).",
+                    "description": "Minimum top-1 / top-2 UMI ratio for a single assignment (threshold method). Default 3.",
                     "fa_icon": "fas fa-divide",
                     "default": 3
                 },
                 "keep_nonsingle": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Keep multi/unassigned cells in the ALIVE h5ad with gene set to their status (inspection only). Default: exclude them (docs/decisions/006).",
+                    "description": "Keep multi/unassigned cells in the ALIVE h5ad with gene set to their status (inspection only). Default: exclude them.",
                     "fa_icon": "fas fa-filter"
                 },
                 "pool_alive": {
                     "type": "boolean",
                     "default": false,
-                    "description": "Also write alive/pooled.h5ad containing every sample (GEM group) of the samplesheet, obs index <barcode>-<sample_id>; needs more than one sample and one shared reference index (docs/decisions/011).",
+                    "description": "Also write alive/pooled.h5ad containing every sample (GEM group) of the samplesheet, obs index <barcode>-<sample_id>; needs more than one sample and one shared reference index.",
                     "fa_icon": "fas fa-layer-group"
                 }
             }
@@ -174,7 +174,7 @@
                 "aws_cli": {
                     "type": "string",
                     "default": "/home/ec2-user/miniconda/bin/aws",
-                    "description": "Path of the AWS CLI inside the Batch compute-environment AMI (docs/aws_setup.md).",
+                    "description": "Path of the AWS CLI inside the Batch compute-environment AMI.",
                     "fa_icon": "fab fa-aws",
                     "hidden": true
                 }

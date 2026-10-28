@@ -5,3 +5,5 @@ channels:
   - bioconda
 dependencies:
   - bioconda::kb-python=0.28.2
+  # transitive in kb-python; pinned to the version in the kb-python 0.28.2 container so conda and container runs write the same h5ad
+  - conda-forge::anndata=0.9.2

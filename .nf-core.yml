@@ -7,7 +7,6 @@ lint:
   included_configs: false
   files_unchanged:
     - .prettierignore
-    - .prettierignore
     - CODE_OF_CONDUCT.md
     - assets/nf-core-ngspipeline_logo_light.png
     - docs/images/nf-core-ngspipeline_logo_light.png
@@ -42,7 +41,7 @@ template:
   description: "Perturb-seq raw-read pipeline: FASTQ -> GEX/guide count matrices ->
     per-cell guide assignment -> ALIVE-ready h5ad"
   author: Jae Min Yoon
-  version: 1.0.2
+  version: 1.0.3
   force: true
   outdir: .
   skip_features:

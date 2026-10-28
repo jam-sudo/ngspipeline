@@ -3,6 +3,23 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## v1.0.3 - [2026-10-28]
+
+Documentation patch; no change to pipeline logic, parameters or outputs.
+
+### `Changed`
+
+- README: main-parameter table, validation results (concordance with the authors' guide assignments, cross-engine reproducibility, `-resume`), scope and limitations, links to the usage and output docs.
+- `docs/usage.md` and `assets/samplesheet.csv` describe the real 6-column samplesheet, the guide library, the reference options and guide assignment instead of the nf-core template text.
+- `docs/output.md` covers `counts/`, `guides/`, `alive/` and `reference/`.
+- `CITATIONS.md` and the MultiQC methods description cite kallisto, bustools, kb-python, anndata and (for `mixture`) Replogle et al. 2022.
+- `-profile test_full` holds the settings of the full-size validation run (inputs supplied by the user) instead of unrelated template data that could not run.
+
+### `Fixed`
+
+- `--help` descriptions no longer reference documents that are not in the repository; the dual-guide row of the ALIVE schema table renders correctly.
+- Conda environments of the local modules pin `anndata=0.9.2`, the version in the kb-python container; conda could otherwise resolve 0.8.0 and write different h5ad bytes.
+
 ## v1.0.2 - [2026-10-07]
 
 Documentation patch; no change to pipeline code, parameters or outputs.
